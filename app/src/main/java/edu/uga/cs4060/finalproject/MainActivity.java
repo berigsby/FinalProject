@@ -1,5 +1,6 @@
 package edu.uga.cs4060.finalproject;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     EditText editText;
-    Button button;
+    Button button, testingButton;
 
     DatabaseReference myRef;
 
@@ -34,6 +35,16 @@ public class MainActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.editText);
         button = (Button) findViewById(R.id.button);
 
+        testingButton = (Button) findViewById(R.id.testingButton);
+        testingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(),TeacherMenuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        /*
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("message");
@@ -62,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+        */
 
     }
 
