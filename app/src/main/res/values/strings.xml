@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FinalProject</string>
+    <string name="title_activity_teacher_menu_element">TeacherMenuElement</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

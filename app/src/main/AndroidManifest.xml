@@ -16,7 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TeacherMenuActivity"></activity>
+        <activity android:name=".TeacherMenuActivity" />
+        <activity
+            android:name=".TeacherMenuElement"
+            android:label="@string/title_activity_teacher_menu_element"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
