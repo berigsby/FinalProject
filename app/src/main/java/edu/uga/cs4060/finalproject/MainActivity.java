@@ -44,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
+
         // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("message");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myRef.setValue(editText.getText().toString());
+                myRef.child("testing").push().child("myString").setValue(editText.getText().toString());
             }
         });
 
@@ -62,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
+                String value = "";
+                for(DataSnapshot child : dataSnapshot.child("testing").getChildren()){
+                    value += child.child("myString").getValue(String.class);
+                }
                 textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
             }
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-        */
+
+
+
 
     }
 
