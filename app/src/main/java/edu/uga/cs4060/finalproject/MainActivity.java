@@ -63,9 +63,18 @@ public class MainActivity extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 String value = "";
-                for(DataSnapshot child : dataSnapshot.child("testing").getChildren()){
-                    value += child.child("myString").getValue(String.class);
-                }
+                for(DataSnapshot child1 : dataSnapshot.child("class").getChildren()){
+                    String className = child1.child("name").getValue(String.class);
+                    String classId = child1.getKey();
+                    for(DataSnapshot child2 : dataSnapshot.child("teacherToClass").getChildren()){
+                        String classId2 = child2.child("classId").getValue(String.class);
+                        if(classId2.equals(classId)){
+                            String teacherId = child2.child("teacherId").getValue(String.class);
+                            String teacherName = dataSnapshot.child("teacher").child(teacherId).child("name").getValue(String.class);
+                            value += (className + "'s teacher is " + teacherName + "\n");
+                        }//if
+                    }//for child2
+                }//for child1
                 textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
             }
