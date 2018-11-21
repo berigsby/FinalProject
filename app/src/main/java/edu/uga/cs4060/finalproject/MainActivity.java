@@ -65,13 +65,15 @@ public class MainActivity extends AppCompatActivity {
                 String value = "";
                 for(DataSnapshot child1 : dataSnapshot.child("class").getChildren()){
                     String className = child1.child("name").getValue(String.class);
-                    String classId = child1.getKey();
+                    //String classId = child1.getKey();
+                    String classId = child1.child("classId").getValue(String.class);
                     for(DataSnapshot child2 : dataSnapshot.child("teacherToClass").getChildren()){
                         String classId2 = child2.child("classId").getValue(String.class);
                         if(classId2.equals(classId)){
                             String teacherId = child2.child("teacherId").getValue(String.class);
-                            String teacherName = dataSnapshot.child("teacher").child(teacherId).child("name").getValue(String.class);
-                            value += (className + "'s teacher is " + teacherName + "\n");
+                            //String teacherName = dataSnapshot.child("teacher").child(teacherId).child("name").getValue(String.class);
+                            TeacherPojo teacher = dataSnapshot.child("teacher").child(teacherId).getValue(TeacherPojo.class);
+                            value += (className + "'s teacher is " + teacher.getName() + "\n");
                         }//if
                     }//for child2
                 }//for child1
