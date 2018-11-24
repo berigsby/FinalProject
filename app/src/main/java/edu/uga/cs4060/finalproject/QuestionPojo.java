@@ -1,7 +1,10 @@
 package edu.uga.cs4060.finalproject;
 
-public class QuestionPojo {
+import com.google.firebase.database.Exclude;
+
+public class QuestionPojo extends FirebasePojo{
     private String questionId;
+    private String quizId;
     private String questionText;
     private String answer1;
     private String answer2;
@@ -11,10 +14,19 @@ public class QuestionPojo {
 
     @SuppressWarnings("unused")
     public QuestionPojo() {
+        questionId = "";
+        quizId = "";
+        questionText = "";
+        answer1 = "";
+        answer2 = "";
+        answer3 = "";
+        answer4 = "";
+        correctAnswerChoice = -1;
     }
 
-    public QuestionPojo(String questionId, String questionText, String answer1, String answer2, String answer3, String answer4, int correctAnswerChoice) {
+    public QuestionPojo(String questionId, String quizId, String questionText, String answer1, String answer2, String answer3, String answer4, int correctAnswerChoice) {
         this.questionId = questionId;
+        this.quizId = quizId;
         this.questionText = questionText;
         this.answer1 = answer1;
         this.answer2 = answer2;
@@ -29,6 +41,14 @@ public class QuestionPojo {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+    }
+
+    public String getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(String quizId) {
+        this.quizId = quizId;
     }
 
     public String getQuestionText() {
@@ -77,5 +97,23 @@ public class QuestionPojo {
 
     public void setCorrectAnswerChoice(int correctAnswerChoice) {
         this.correctAnswerChoice = correctAnswerChoice;
+    }
+
+    @Exclude
+    @Override
+    public String getDatabaseKey(){
+        return "question";
+    }
+
+    @Exclude
+    @Override
+    public String getId(){
+        return getQuestionId();
+    }
+
+    @Exclude
+    @Override
+    public void setId(String questionId){
+        setQuestionId(questionId);
     }
 }

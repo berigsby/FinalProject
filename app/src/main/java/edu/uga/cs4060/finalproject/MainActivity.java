@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     EditText editText;
     Button button, testingButton;
+
+    DataSnapshot myDataSnapshot;
 
     DatabaseReference myRef;
 
@@ -52,7 +56,114 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myRef.child("testing").push().child("myString").setValue(editText.getText().toString());
+
+                //This is meant to be an example of how to do things with the database
+                /*
+                //create a teacher, a class for them, and some resources/quizzes and questions
+                TeacherPojo steveTeacher = new TeacherPojo("Steve", "");
+                steveTeacher = MyFirebaseHelper.create(myRef, steveTeacher);
+                ClassPojo stevesClass = new ClassPojo("",steveTeacher.getTeacherId(),"This is Steves Class", "This class is aight");
+                stevesClass = MyFirebaseHelper.create(myRef,stevesClass);
+                ResourcePojo stevesRes1 = new ResourcePojo("",stevesClass.getClassId(),"Res1 for Steve", "this is test...");
+                stevesRes1 = MyFirebaseHelper.create(myRef,stevesRes1);
+                ResourcePojo stevesRes2 = new ResourcePojo("",stevesClass.getClassId(),"Res2 for Steve", "this is test also.");
+                stevesRes2 = MyFirebaseHelper.create(myRef,stevesRes2);
+                QuizPojo stevesQuiz1 = new QuizPojo("",stevesClass.getClassId(),"Quiz 1","First Quiz for Steves Class");
+                stevesQuiz1 = MyFirebaseHelper.create(myRef, stevesQuiz1);
+                QuizPojo stevesQuiz2 = new QuizPojo("",stevesClass.getClassId(),"Quiz 2","Second Quiz for Steves Class");
+                stevesQuiz2 = MyFirebaseHelper.create(myRef, stevesQuiz2);
+                for(int i = 0; i < 6; i ++){
+                    String s = Integer.toString(i);
+                    QuestionPojo questionPojo = new QuestionPojo("",stevesQuiz1.getQuizId(),"What is 0 + " + s,
+                            s, Integer.toString(i+1), Integer.toString(i+2), Integer.toString(i+3), 1);
+                    MyFirebaseHelper.create(myRef,questionPojo);
+                }
+                */
+
+                String classId = "-LS3EQGm-8kZEW5ZDAw1"; //This would be obtained initally from the teacher. The Class Code
+
+                /*
+                //Create a new student
+                StudentPojo benStudent = new StudentPojo("","Ben");
+                benStudent = MyFirebaseHelper.create(myRef,benStudent);
+                MyFirebaseHelper.enroll(myRef,benStudent.getStudentId(),classId);
+                */
+
+                /*
+                //view the class resources
+                List<ResourcePojo> bensClassRes = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
+                String value = "";
+                for(ResourcePojo resourcePojo : bensClassRes){
+                    value += resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
+                }
+                textView.setText(value);
+                */
+
+                /*
+                //view the classes quizzes
+                List<QuizPojo> classQuizzes = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot,classId);
+                String value = "";
+                for(QuizPojo quizPojo : classQuizzes){
+                    value += quizPojo.getTitle() + " " + quizPojo.getDesc() + "\n";
+                }
+                textView.setText(value);
+                */
+
+                /*
+                //view the quiz questions
+                QuizPojo quizPojo = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot, classId).get(0);
+                List<QuestionPojo> questionPojos = MyFirebaseHelper.getQuestionsFromQuizId(myDataSnapshot,quizPojo.getQuizId());
+                String value = "";
+                for(QuestionPojo questionPojo : questionPojos){
+                    value += questionPojo.getQuestionText() + " " + questionPojo.getAnswer1() + " " +
+                            questionPojo.getAnswer2() + " " +  questionPojo.getAnswer3() + " " +  questionPojo.getAnswer4() + "\n";
+                }
+                textView.setText(value);
+                */
+
+                /*
+                //This is how one would take a quiz
+                String studentId = "-LS3HYIciNWJduRJAoq-"; //This would be obtainable through the current user
+                QuizPojo quizPojo = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot, classId).get(0);
+                List<QuestionPojo> questionPojos = MyFirebaseHelper.getQuestionsFromQuizId(myDataSnapshot,quizPojo.getQuizId());
+                int i = 1;
+                for(QuestionPojo questionPojo : questionPojos){
+                    QuizResultsToQuestionPojo quizResultsToQuestionPojo = new QuizResultsToQuestionPojo("",quizPojo.getQuizId(),questionPojo.getQuestionId(),studentId, i%4);
+                    i ++;
+                    quizResultsToQuestionPojo = MyFirebaseHelper.create(myRef,quizResultsToQuestionPojo);
+                }
+                MyFirebaseHelper.takeQuiz(myRef,studentId,quizPojo.getQuizId());
+                */
+
+                /*
+                //This is how to view past quizzes taken
+                String studentId = "-LS3HYIciNWJduRJAoq-"; //This would be obtainable through the current user
+                List<QuizPojo> classQuizzesTaken = MyFirebaseHelper.getQuizzesTaken(myDataSnapshot,studentId,classId);
+                String value = "";
+                for(QuizPojo quizPojo : classQuizzesTaken){
+                    value += quizPojo.getTitle() + " " + quizPojo.getDesc() + "\n";
+                }
+                textView.setText(value);
+                */
+
+                /*
+                //This is how to view a particular quiz results
+                String studentId = "-LS3HYIciNWJduRJAoq-"; //This would be obtainable through the current user
+                QuizPojo quiz = MyFirebaseHelper.getQuizzesTaken(myDataSnapshot,studentId,classId).get(0);
+                List<QuizResultsToQuestionPojo> quizQuestions = MyFirebaseHelper.getQuizResultsToQuestionFromIds(myDataSnapshot,quiz.getQuizId(),studentId,classId);
+                String value = "";
+                for(QuizResultsToQuestionPojo quizQuestion : quizQuestions){
+                    String mark = "";
+                    if(MyFirebaseHelper.getQuestion(myDataSnapshot,quizQuestion.getQuestionId()).getCorrectAnswerChoice() == quizQuestion.getUserAnswerChoice()){
+                        mark = "Correct";
+                    } else {
+                        mark = "Wrong";
+                    }
+                    value += MyFirebaseHelper.getQuestion(myDataSnapshot, quizQuestion.getQuestionId()).getQuestionText() + " was " + mark + "\n";
+                }
+                textView.setText(value);
+                */
+
             }
         });
 
@@ -62,21 +173,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = "";
-                for(DataSnapshot child1 : dataSnapshot.child("class").getChildren()){
-                    String className = child1.child("name").getValue(String.class);
-                    //String classId = child1.getKey();
-                    String classId = child1.child("classId").getValue(String.class);
-                    for(DataSnapshot child2 : dataSnapshot.child("teacherToClass").getChildren()){
-                        String classId2 = child2.child("classId").getValue(String.class);
-                        if(classId2.equals(classId)){
-                            String teacherId = child2.child("teacherId").getValue(String.class);
-                            //String teacherName = dataSnapshot.child("teacher").child(teacherId).child("name").getValue(String.class);
-                            TeacherPojo teacher = dataSnapshot.child("teacher").child(teacherId).getValue(TeacherPojo.class);
-                            value += (className + "'s teacher is " + teacher.getName() + "\n");
-                        }//if
-                    }//for child2
-                }//for child1
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
                 textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
             }

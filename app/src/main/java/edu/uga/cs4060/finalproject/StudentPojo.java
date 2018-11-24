@@ -1,6 +1,8 @@
 package edu.uga.cs4060.finalproject;
 
-public class StudentPojo {
+import com.google.firebase.database.Exclude;
+
+public class StudentPojo extends FirebasePojo{
     private String studentId;
     private String name;
 
@@ -29,5 +31,23 @@ public class StudentPojo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Exclude
+    @Override
+    public String getDatabaseKey(){
+        return "student";
+    }
+
+    @Exclude
+    @Override
+    public String getId(){
+        return getStudentId();
+    }
+
+    @Exclude
+    @Override
+    public void setId(String studentId){
+        setStudentId(studentId);
     }
 }
