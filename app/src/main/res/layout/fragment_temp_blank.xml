@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TeacherResourcesFragment">
+    tools:context=".tempBlankFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
-    <ListView
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:text="TODO Replace this with a proper fragment "
+        android:textSize="30sp" />
 
 </FrameLayout>
