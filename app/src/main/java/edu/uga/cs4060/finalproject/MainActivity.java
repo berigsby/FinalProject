@@ -1,6 +1,11 @@
 package edu.uga.cs4060.finalproject;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +14,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 
 import java.util.List;
 
@@ -21,6 +34,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static String TAG = "MainActivity";
+    private static final int RC_SIGN_IN = 9001;
 
     TextView textView;
     EditText editText;
@@ -29,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     DataSnapshot myDataSnapshot;
 
     DatabaseReference myRef;
+
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +68,57 @@ public class MainActivity extends AppCompatActivity {
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
+
+        // Read from the database
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
+                //textView.setText(value);
+                Log.d(TAG, "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUI(account);
+
+        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            }
+        });
+
+        findViewById(R.id.signOut).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                mGoogleSignInClient.signOut();
+                updateUI(null);
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,30 +234,62 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = "test";
+    }//onCreate
 
-                myDataSnapshot = dataSnapshot;
+    // [START onActivityResult]
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                textView.setText(value);
-                Log.d(TAG, "Value is: " + value);
-            }
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+            // Signed in successfully, show authenticated UI.
+            updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+    private void updateUI(@Nullable GoogleSignInAccount account) {
+        if(account != (null)){
+            textView.setText(account.getEmail() + " is logged in. " + account.getId());
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.signOut).setVisibility(View.VISIBLE);
+            if(crudate(account)){
+                textView.append("True");
+            } else{
+                String name = account.getDisplayName();
+                String id = account.getId();
 
+                PopUpTeacherOrStudent popUp = new PopUpTeacherOrStudent();
+                popUp.setTheId(id);
+                popUp.setName(name);
+                popUp.setMyRef(myRef);
+                popUp.showNow(getSupportFragmentManager(),"hi");
+            }//else
+        } else {
+            textView.setText("No one is sign in");
+            findViewById(R.id.signOut).setVisibility(View.GONE);
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        }//else
+    }
 
-
-
+    private boolean crudate(@Nullable GoogleSignInAccount account){
+        if(myDataSnapshot == null) return true;
+        return MyFirebaseHelper.accountExists(myDataSnapshot,account.getId());
     }
 
 }
+

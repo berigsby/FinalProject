@@ -254,5 +254,25 @@ public class MyFirebaseHelper {
         return returnList;
     }
 
+    public static boolean accountExists(DataSnapshot dataSnapshot, String accountId){
+        boolean exists = false;
+        List<TeacherPojo> teachers = getAllTeachers(dataSnapshot);
+        for(TeacherPojo teacher : teachers){
+            if(teacher.getTeacherId().equals(accountId)) exists = true;
+        }
+        if(exists) return true;
+
+        List<StudentPojo> students = getAllStudents(dataSnapshot);
+        for(StudentPojo student : students){
+            if(student.getStudentId().equals(accountId)) exists = true;
+        }
+        if(exists) return true;
+        return false;
+    }
+
+    public static <T extends FirebasePojo> void createAccount(DatabaseReference myRef, T tClass){
+        DatabaseReference pushRef = myRef.child(tClass.getDatabaseKey()).child(tClass.getId());
+        pushRef.setValue(tClass);
+    }
 
 }
