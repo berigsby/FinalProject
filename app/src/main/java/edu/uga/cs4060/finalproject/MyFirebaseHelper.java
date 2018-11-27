@@ -7,6 +7,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MyFirebaseHelper {
@@ -146,7 +148,48 @@ public class MyFirebaseHelper {
         createRelationRow(myRef,"enrollment","classId", classId,"studentId", studentId);
     }
 
-    public static void takeQuiz(DatabaseReference myRef, String studentId, String quizId){
+    public static String quizContinueable(DataSnapshot dataSnapshot, String classId, String studentId){
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
+        List<QuizPojo> quizzesIncomplete = new ArrayList<>();
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getStudentId().equals(studentId) &&
+                    quizResultsToQuestionPojo.getUserAnswerChoice() == -1){
+                quizzesIncomplete.add(getQuiz(dataSnapshot,quizResultsToQuestionPojo.getQuizId()));
+            }
+        }
+
+        List<QuizPojo> quizzesTaken = getQuizzesTaken(dataSnapshot,studentId,classId);
+        for(QuizPojo quizTaken : quizzesTaken){
+            if(quizzesIncomplete.contains(quizTaken)){
+                return quizTaken.getQuizId();
+            }
+        }
+        return "";
+    }
+
+    public static List<QuestionPojo> continueQuiz(DataSnapshot dataSnapshot, String studentId, String quizId){
+        List<QuestionPojo> questions = getQuestionsFromQuizId(dataSnapshot,quizId);
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot,quizId,studentId);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getUserAnswerChoice() != -1){
+                questions.remove(getQuestion(dataSnapshot,quizResultsToQuestionPojo.getQuestionId()));
+            }
+        }
+        Collections.shuffle(questions);
+        return questions;
+    }
+
+    public static List<QuestionPojo> initiateQuiz(DatabaseReference myRef, DataSnapshot dataSnapshot, String studentId, String quizId){
+        takeQuiz(myRef,studentId,quizId);
+        List<QuestionPojo> questions = getQuestionsFromQuizId(dataSnapshot,quizId);
+        for(QuestionPojo question : questions){
+            QuizResultsToQuestionPojo quizResultsToQuestionPojo = new QuizResultsToQuestionPojo("",quizId,question.getQuestionId(),studentId,-1);
+        }
+        Collections.shuffle(questions);
+        return questions;
+    }
+
+    private static void takeQuiz(DatabaseReference myRef, String studentId, String quizId){
         createRelationRow(myRef,"quizResults","studentId", studentId, "quizId",quizId);
     }
 
@@ -221,6 +264,20 @@ public class MyFirebaseHelper {
         return returnList;
     }
 
+    public static List<StudentPojo> getStudentsFromClassId(DataSnapshot dataSnapshot, String classId){
+        ArrayList<StudentPojo> returnList = new ArrayList<>();
+        List<IdHolder> list = getRelationTable(dataSnapshot, "enrollment");
+        for(IdHolder item : list){
+            if(! item.getClassId().equals(classId)){
+                list.remove(item);
+            }
+        }
+        for(int i = 0; i < list.size(); i++){
+            returnList.add(getStudent(dataSnapshot,list.get(i).getStudentId()));
+        }
+        return returnList;
+    }
+
     public static List<QuizPojo> getQuizzesTaken(DataSnapshot dataSnapshot, String studentId, String classId){
         ArrayList<QuizPojo> returnList = new ArrayList<>();
 
@@ -239,7 +296,7 @@ public class MyFirebaseHelper {
         return returnList;
     }
 
-    public static List<QuizResultsToQuestionPojo> getQuizResultsToQuestionFromIds(DataSnapshot dataSnapshot, String quizId, String studentId, String classId){
+    public static List<QuizResultsToQuestionPojo> getQuizResultsToQuestionFromIds(DataSnapshot dataSnapshot, String quizId, String studentId){
         ArrayList<QuizResultsToQuestionPojo> returnList = new ArrayList<>();
 
         List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
@@ -275,4 +332,68 @@ public class MyFirebaseHelper {
         pushRef.setValue(tClass);
     }
 
+    public static void removeTeacher(DatabaseReference myRef, DataSnapshot dataSnapshot, String teacherId){
+        removeItem(myRef,"teacher",teacherId);
+        List<ClassPojo> classes = getClassesFromTeacherId(dataSnapshot, teacherId);
+        for(ClassPojo classPojo : classes){
+            removeClass(myRef,dataSnapshot,classPojo.getClassId());
+        }
+    }
+
+    public static void removeClass(DatabaseReference myRef, DataSnapshot dataSnapshot, String classId){
+        removeItem(myRef,"class",classId);
+        List<ResourcePojo> resources = getResourcesFromClassId(dataSnapshot, classId);
+        for(ResourcePojo resource : resources){
+            removeResource(myRef,resource.getResourceId());
+        }
+        List<QuizPojo> quizzes = getQuizzesFromClassId(dataSnapshot,classId);
+        for(QuizPojo quiz : quizzes){
+            removeQuiz(myRef, dataSnapshot, quiz.getQuizId());
+        }
+    }
+
+    public static void removeResource(DatabaseReference myRef, String resourceId){
+        removeItem(myRef,"resource",resourceId);
+    }
+
+    public static void removeQuiz(DatabaseReference myRef, DataSnapshot dataSnapshot, String quizId){
+        removeItem(myRef, "quiz", quizId);
+        //TODO remove linked data...
+        /*List<IdHolder> myList = getRelationTable(dataSnapshot,"quizResults");
+        for(IdHolder item : myList){
+            String itemQuizId = item.getQuizId();
+            if(itemQuizId == null) continue;
+            if(itemQuizId.equals(quizId)){
+                removeItem(myRef,"quizResults",item.get);
+            }
+        }*/
+        List<QuestionPojo> questions = getQuestionsFromQuizId(dataSnapshot, quizId);
+        for(QuestionPojo question : questions){
+            removeQuestion(myRef, dataSnapshot, question.getQuestionId());
+        }
+    }
+
+    public static void removeQuestion(DatabaseReference myRef, DataSnapshot dataSnapshot, String questionId){
+        removeItem(myRef,"question",questionId);
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getQuestionId().equals(questionId)){
+                removeQuizResultsToQuestion(myRef, quizResultsToQuestionPojo.getQuizResultsToQuestionId());
+            }
+        }
+    }
+
+    public static void removeQuizResultsToQuestion(DatabaseReference myRef, String quizResulstToQuestionId){
+        removeItem(myRef,"quizResultsToQuestion",quizResulstToQuestionId);
+    }
+
+    public static void removeStudent(DatabaseReference myRef, DataSnapshot dataSnapshot, String studentId){
+        removeItem(myRef,"student",studentId);
+        //TODO remove taken quizzes...
+        //TODO remove enrollment status
+    }
+
+    public static void removeItem(DatabaseReference myRef, String databaseKey, String myId){
+        myRef.child(databaseKey).child(myId).removeValue();
+    }
 }
