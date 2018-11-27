@@ -5,14 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".TeacherClassRoster">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:text="Class Roster Fragment"
+        android:gravity="center"
+        android:textSize="30sp"/>
 
 </FrameLayout>
