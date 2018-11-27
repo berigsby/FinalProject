@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
 
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener(){
@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
                 */
 
                 String classId = "-LS3EQGm-8kZEW5ZDAw1"; //This would be obtained initally from the teacher. The Class Code
+                String studentId = "103158840994617443644";
+                //MyFirebaseHelper.enroll(myRef,studentId,classId);
 
                 /*
                 //Create a new student
@@ -189,17 +191,13 @@ public class MainActivity extends AppCompatActivity {
                 */
 
                 /*
-                //This is how one would take a quiz
-                String studentId = "-LS3HYIciNWJduRJAoq-"; //This would be obtainable through the current user
-                QuizPojo quizPojo = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot, classId).get(0);
-                List<QuestionPojo> questionPojos = MyFirebaseHelper.getQuestionsFromQuizId(myDataSnapshot,quizPojo.getQuizId());
-                int i = 1;
-                for(QuestionPojo questionPojo : questionPojos){
-                    QuizResultsToQuestionPojo quizResultsToQuestionPojo = new QuizResultsToQuestionPojo("",quizPojo.getQuizId(),questionPojo.getQuestionId(),studentId, i%4);
-                    i ++;
-                    quizResultsToQuestionPojo = MyFirebaseHelper.create(myRef,quizResultsToQuestionPojo);
-                }
-                MyFirebaseHelper.takeQuiz(myRef,studentId,quizPojo.getQuizId());
+                //This is how one would initialize a quiz and take it
+                String quizId = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot,classId).get(0).getQuizId();
+                //Do the initiate once
+                MyFirebaseHelper.initiateQuiz(myRef,myDataSnapshot,studentId,quizId);
+                //Repeat this until null to cycle throught the questions randomly
+                QuestionPojo nextQuestion = MyFirebaseHelper.getNextQuestion(myRef, myDataSnapshot, quizId, studentId);
+                if(nextQuestion != null) MyFirebaseHelper.markQuestion(myRef,myDataSnapshot,nextQuestion,studentId,2);
                 */
 
                 /*

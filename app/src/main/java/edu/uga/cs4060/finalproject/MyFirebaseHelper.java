@@ -269,16 +269,17 @@ public class MyFirebaseHelper {
         for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
             if(quizResultsToQuestionPojo.getStudentId().equals(studentId) &&
                     quizResultsToQuestionPojo.getUserAnswerChoice() <= 0){
-                quizzesIncomplete.add(getQuiz(dataSnapshot,quizResultsToQuestionPojo.getQuizId()));
+                return quizResultsToQuestionPojo.getQuizId();
+                //quizzesIncomplete.add(getQuiz(dataSnapshot,quizResultsToQuestionPojo.getQuizId()));
             }
         }
 
-        List<QuizPojo> quizzesTaken = getQuizzesTaken(dataSnapshot,studentId,classId);
-        for(QuizPojo quizTaken : quizzesTaken){
-            if(quizzesIncomplete.contains(quizTaken)){
-                return quizTaken.getQuizId();
-            }
-        }
+        //List<QuizPojo> quizzesTaken = getQuizzesTaken(dataSnapshot,studentId,classId);
+        //for(QuizPojo quizTaken : quizzesTaken){
+        //    if(quizzesIncomplete.contains(quizTaken)){
+        //        return quizTaken.getQuizId();
+        //    }
+        //}
         return "";
     }
 
@@ -339,14 +340,20 @@ public class MyFirebaseHelper {
         String quizContinueable = quizContinueable(dataSnapshot,getQuiz(dataSnapshot,quizId).getClassId(),studentId);
         if(quizContinueable.equals("")) return null;
         List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot, quizId, studentId);
-        //List<QuestionPojo> quizQuestions = continueQuiz(dataSnapshot,studentId,quizId);
+        List<QuizResultsToQuestionPojo> returnList = new ArrayList<>();
         for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getUserAnswerChoice() <= 0){
+                returnList.add(quizResultsToQuestionPojo);
+            }
+        }
+
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : returnList){
             if(quizResultsToQuestionPojo.getUserAnswerChoice() == 0){
-                if(quizResultsToQuestionPojos.size() > 1) {
-                    quizResultsToQuestionPojos.remove(quizResultsToQuestionPojo);
-                    Collections.shuffle(quizResultsToQuestionPojos);
-                    quizResultsToQuestionPojos.get(0).setUserAnswerChoice(0);
-                    update(myRef, quizResultsToQuestionPojos.get(0));
+                if(returnList.size() > 1) {
+                    returnList.remove(quizResultsToQuestionPojo);
+                    Collections.shuffle(returnList);
+                    returnList.get(0).setUserAnswerChoice(0);
+                    update(myRef, returnList.get(0));
                     return getQuestion(dataSnapshot, quizResultsToQuestionPojo.getQuestionId());
                 } else {
                     return getQuestion(dataSnapshot, quizResultsToQuestionPojo.getQuestionId());
@@ -354,6 +361,22 @@ public class MyFirebaseHelper {
             }
         }
         return null;
+    }
+
+    public static boolean markQuestion(DatabaseReference myRef, DataSnapshot dataSnapshot, QuestionPojo question, String studentId, int ansChoice){
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot,question.getQuizId(),studentId);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getQuestionId().equals(question.getQuestionId())){
+                quizResultsToQuestionPojo.setUserAnswerChoice(ansChoice);
+                update(myRef,quizResultsToQuestionPojo);
+                if(quizResultsToQuestionPojo.getUserAnswerChoice() == question.getCorrectAnswerChoice()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -622,6 +645,21 @@ public class MyFirebaseHelper {
         for(QuizPojo quiz : quizzes){
             removeQuiz(myRef, dataSnapshot, quiz.getQuizId());
         }
+
+        ArrayList<IdHolder> idHolders2 = new ArrayList<>();
+        ArrayList<String> ids2 = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("enrollment").getChildren()){
+            ids2.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders2.add(idHolder);
+        }//for
+        for(int i = 0; i < idHolders2.size(); i++){
+            String itemClassId = idHolders2.get(i).getClassId();
+            if(itemClassId == null) continue;
+            if(itemClassId.equals(classId)){
+                removeItem(myRef,"enrollment",ids2.get(i));
+            }
+        }
     }
 
     /**
@@ -641,18 +679,33 @@ public class MyFirebaseHelper {
      */
     public static void removeQuiz(DatabaseReference myRef, DataSnapshot dataSnapshot, String quizId){
         removeItem(myRef, "quiz", quizId);
-        //TODO remove linked data...
-        /*List<IdHolder> myList = getRelationTable(dataSnapshot,"quizResults");
-        for(IdHolder item : myList){
-            String itemQuizId = item.getQuizId();
+
+        ArrayList<IdHolder> idHolders = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("quizResults").getChildren()){
+            ids.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders.add(idHolder);
+        }//for
+
+        for(int i = 0; i < idHolders.size(); i++){
+            String itemQuizId = idHolders.get(i).getQuizId();
             if(itemQuizId == null) continue;
             if(itemQuizId.equals(quizId)){
-                removeItem(myRef,"quizResults",item.get);
+                removeItem(myRef,"quizResults",ids.get(i));
             }
-        }*/
+        }
+
         List<QuestionPojo> questions = getQuestionsFromQuizId(dataSnapshot, quizId);
         for(QuestionPojo question : questions){
             removeQuestion(myRef, dataSnapshot, question.getQuestionId());
+        }
+
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getQuizId().equals(quizId)){
+                removeQuizResultsToQuestion(myRef,quizResultsToQuestionPojo.getQuizResultsToQuestionId());
+            }
         }
     }
 
@@ -668,6 +721,39 @@ public class MyFirebaseHelper {
         for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
             if(quizResultsToQuestionPojo.getQuestionId().equals(questionId)){
                 removeQuizResultsToQuestion(myRef, quizResultsToQuestionPojo.getQuizResultsToQuestionId());
+            }
+        }
+    }
+
+    /**
+     * Removes all the questions answered by studentId for quizId and associtations from the firebase
+     * @param myRef
+     * @param dataSnapshot
+     * @param classId
+     * @param studentId
+     * @param quizId
+     */
+    public static void removeAnsweredQuestions(DatabaseReference myRef, DataSnapshot dataSnapshot, String studentId, String quizId){
+        ArrayList<IdHolder> idHolders = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("quizResults").getChildren()){
+            ids.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders.add(idHolder);
+        }//for
+        for(int i = 0; i < idHolders.size(); i++){
+            String itemStudentId = idHolders.get(i).getStudentId();
+            String itemQuizId = idHolders.get(i).getQuizId();
+            if(itemQuizId == null) continue;
+            if(itemStudentId == null) continue;
+            if(itemStudentId.equals(studentId) && itemQuizId.equals(quizId)){
+                removeItem(myRef,"quizResults",ids.get(i));
+            }
+        }
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getStudentId().equals(studentId) && quizResultsToQuestionPojo.getQuizId().equals(quizId)){
+                removeQuizResultsToQuestion(myRef,quizResultsToQuestionPojo.getQuizResultsToQuestionId());
             }
         }
     }
@@ -689,8 +775,42 @@ public class MyFirebaseHelper {
      */
     public static void removeStudent(DatabaseReference myRef, DataSnapshot dataSnapshot, String studentId){
         removeItem(myRef,"student",studentId);
-        //TODO remove taken quizzes...
-        //TODO remove enrollment status
+        ArrayList<IdHolder> idHolders = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("quizResults").getChildren()){
+            ids.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders.add(idHolder);
+        }//for
+        for(int i = 0; i < idHolders.size(); i++){
+            String itemQuizId = idHolders.get(i).getStudentId();
+            if(itemQuizId == null) continue;
+            if(itemQuizId.equals(studentId)){
+                removeItem(myRef,"quizResults",ids.get(i));
+            }
+        }
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getAllQuizResultsToQuestions(dataSnapshot);
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+            if(quizResultsToQuestionPojo.getStudentId().equals(studentId)){
+                removeQuizResultsToQuestion(myRef,quizResultsToQuestionPojo.getQuizResultsToQuestionId());
+            }
+        }
+
+        ArrayList<IdHolder> idHolders2 = new ArrayList<>();
+        ArrayList<String> ids2 = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("enrollment").getChildren()){
+            ids2.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders2.add(idHolder);
+        }//for
+        for(int i = 0; i < idHolders2.size(); i++){
+            String itemQuizId = idHolders2.get(i).getStudentId();
+            if(itemQuizId == null) continue;
+            if(itemQuizId.equals(studentId)){
+                removeItem(myRef,"enrollment",ids2.get(i));
+            }
+        }
+
     }
 
     /**
