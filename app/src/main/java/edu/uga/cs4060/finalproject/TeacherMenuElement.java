@@ -12,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class TeacherMenuElement extends AppCompatActivity{
     final String DEBUG_TAG = "TeacherMenuElementA";
+    TextView elementTextVIew;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +26,7 @@ public class TeacherMenuElement extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setImageResource(android.R.drawable.ic_input_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,8 +35,9 @@ public class TeacherMenuElement extends AppCompatActivity{
             }
         });
 
-        Intent intent = getIntent();
+        elementTextVIew = findViewById(R.id.elementTextVIew);
 
+        Intent intent = getIntent();
         int teacherSelection = intent.getIntExtra("buttonID",0);
 
         //Select the correct fragment
@@ -45,17 +49,20 @@ public class TeacherMenuElement extends AppCompatActivity{
         switch(teacherSelection){
             case R.id.bRes:
                 Log.d(DEBUG_TAG, "bRes " + teacherSelection);
+                elementTextVIew.setText("Your Resources");
                 fragment = new TeacherResourcesFragment();
                 fragment.setArguments(args);
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
+                elementTextVIew.setText("Class Quizzes");
                 fragment = new TeacherQuizzesFragment();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;
             case R.id.bClassList:
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
+                elementTextVIew.setText("Class Roster");
                 fragment = new TeacherClassRoster();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;

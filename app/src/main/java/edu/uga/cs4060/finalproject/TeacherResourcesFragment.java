@@ -4,10 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,13 +20,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
 * Thinking about making it a list fragmet. TODO Change all "Fragments" to "ListFragment"
  */
-public class TeacherResourcesFragment extends Fragment {
+public class TeacherResourcesFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,9 +39,16 @@ public class TeacherResourcesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    //List view
+    ListView resourceListView;
+
     private OnFragmentInteractionListener mListener;
+
+    //Database stuff
     DataSnapshot myDataSnapshot;
     DatabaseReference myRef;
+
+    //Debug
     final String  TAG = "TeacherResourcesF";
 
     public TeacherResourcesFragment() {
@@ -44,7 +59,7 @@ public class TeacherResourcesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param param1 TODO TBD --> Maybe for the fragment
      * @param param2 Parameter 2.
      * @return A new instance of fragment TeacherResourcesFragment.
      */
@@ -67,6 +82,8 @@ public class TeacherResourcesFragment extends Fragment {
         }
         Log.d("TeacherFragRes", "Accessed");
 
+
+        //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
@@ -84,12 +101,9 @@ public class TeacherResourcesFragment extends Fragment {
                 Log.d(TAG, "Value is: " + value);
 
                 String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                List<ResourcePojo> bensClassRes = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
-                String valueS = "";
-                for(ResourcePojo resourcePojo : bensClassRes){
-                    valueS += resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
-                }
 
+                List<ResourcePojo> bensClassRes = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
+                addContentsToListView(bensClassRes);
             }
 
             @Override
@@ -98,17 +112,39 @@ public class TeacherResourcesFragment extends Fragment {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+    }
+    //Add resources to the list view
+    private void addContentsToListView(List<ResourcePojo> bensClassRes){
+        String valueS = "";
+        resourceListView = getActivity().findViewById(R.id.ResourceListView);
+
+//        List<String> res = new ArrayList<String>();
+        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(ResourcePojo resourcePojo : bensClassRes){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", resourcePojo.getTitle());
+            data.put("subtitle", resourcePojo.getText());
+            //valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
+            res.add(data);
+            Log.d(TAG, resourcePojo.getTitle());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        resourceListView.setAdapter(arrayAdapter);
 
 
-
-
-        //TODO Obtain the Resources from the Database
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        //View rootView = inflater.inflate(R.layout.fragment_student_resources, container, false);
         return inflater.inflate(R.layout.fragment_teacher_resources, container, false);
     }
 
@@ -118,6 +154,7 @@ public class TeacherResourcesFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
