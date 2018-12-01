@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -27,8 +28,10 @@ public class FragmentTeacherAddRes extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private String classID ="-LS3EQGm-8kZEW5ZDAw1";
     private OnFragmentInteractionListener mListener;
 
+    private Button bAddResource;
     public FragmentTeacherAddRes() {
         // Required empty public constructor
     }
@@ -58,6 +61,7 @@ public class FragmentTeacherAddRes extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
