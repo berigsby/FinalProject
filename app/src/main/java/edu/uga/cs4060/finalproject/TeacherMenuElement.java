@@ -25,21 +25,51 @@ public class TeacherMenuElement extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        //Get the intent
+        Intent intent = getIntent();
+        final int teacherSelection = intent.getIntExtra("buttonID",0);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setImageResource(android.R.drawable.ic_input_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                fabAction(teacherSelection);
             }
         });
 
         elementTextVIew = findViewById(R.id.elementTextVIew);
+        selectFragment(teacherSelection);
+    }
 
-        Intent intent = getIntent();
-        int teacherSelection = intent.getIntExtra("buttonID",0);
+    /***
+    * Do we see the fab? Yes or no based on option
+    */
+    private void fabSetDisplay(FloatingActionButton fab, int teacherSelection){
+        switch(teacherSelection){
+            case R.id.bRes:
+                Log.d(DEBUG_TAG, "bRes " + teacherSelection);
+                break;
+            case R.id.bQuizzes:
+                Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
+                break;
+            case R.id.bClassList:
+                Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
+                fab.hide();
+                break;
+            case R.id.bAccountInfo:
+                Log.d(DEBUG_TAG, "bAccountInfo " + teacherSelection);
+                fab.hide();
+                break;
+            default:
+                Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 
+        }
+    }
+
+    //Display and use the correct fragment
+    private void selectFragment(int teacherSelection){
         //Select the correct fragment
         Fragment fragment;
         FragmentManager fm = getSupportFragmentManager();
@@ -66,13 +96,41 @@ public class TeacherMenuElement extends AppCompatActivity{
                 fragment = new TeacherClassRoster();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;
-                default:
-                    Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
+            case R.id.bAccountInfo:
+                Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelection);
+                elementTextVIew.setText("Account Information");
+                fragment = new FragmentAccountInfo();
+                ft.replace(R.id.teacherElementFragment,fragment);
+                break;
+            default:
+                Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 
         }
-
-
         ft.commit();
     }
 
+    private void fabAction(int teacherSelection){
+        Fragment fragment;
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Bundle args = new Bundle();
+
+        switch(teacherSelection){
+            case R.id.bRes:
+                Log.d(DEBUG_TAG, "bRes " + teacherSelection);
+                fragment = new FragmentTeacherAddRes();
+                ft.replace(R.id.teacherElementFragment, fragment);
+                ft.addToBackStack(null); //So that the back button doesn't take you to the wrong place
+                ft.commit();
+                break;
+            case R.id.bQuizzes:
+                Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
+                fragment = new FragmentTeacherAddRes();
+                ft.replace(R.id.teacherElementFragment, fragment);
+                break;
+            default:
+                Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
+
+        }
+    }
 }

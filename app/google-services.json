@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "420496743293-f6akeuou48gbd6nhaq9hptkal5ptiln8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.uga.cs4060.finalproject",
+            "certificate_hash": "ff5f61a1e497ad329641f67c6c1bad26b579a16d"
+          }
+        },
+        {
           "client_id": "420496743293-2t6h7t9n00sh9o8069o5qaqmorklomqn.apps.googleusercontent.com",
           "client_type": 3
         }
