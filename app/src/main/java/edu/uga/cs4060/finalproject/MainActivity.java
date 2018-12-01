@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     EditText editText;
-    Button button, testingButton;
+    Button button, testingButton, benTesting;
 
     DataSnapshot myDataSnapshot;
 
@@ -56,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(),TeacherMenuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        benTesting = (Button) findViewById(R.id.ben_testing);
+        benTesting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
                 startActivity(intent);
             }
         });
