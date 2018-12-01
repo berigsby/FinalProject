@@ -347,9 +347,9 @@ public class MyFirebaseHelper {
             if(quizResultsToQuestionPojo.getUserAnswerChoice() == 0){
                 if(returnList.size() > 1) {
                     returnList.remove(quizResultsToQuestionPojo);
-                    Collections.shuffle(returnList);
-                    returnList.get(0).setUserAnswerChoice(0);
-                    update(myRef, returnList.get(0));
+                    //Collections.shuffle(returnList);
+                    //returnList.get(0).setUserAnswerChoice(0);
+                    //update(myRef, returnList.get(0));
                     return getQuestion(dataSnapshot, quizResultsToQuestionPojo.getQuestionId());
                 } else {
                     return getQuestion(dataSnapshot, quizResultsToQuestionPojo.getQuestionId());
@@ -360,19 +360,52 @@ public class MyFirebaseHelper {
     }
 
     public static boolean markQuestion(DatabaseReference myRef, DataSnapshot dataSnapshot, QuestionPojo question, String studentId, int ansChoice){
+        boolean rv = false;
         List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot,question.getQuizId(),studentId);
         for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
             if(quizResultsToQuestionPojo.getQuestionId().equals(question.getQuestionId())){
                 quizResultsToQuestionPojo.setUserAnswerChoice(ansChoice);
                 update(myRef,quizResultsToQuestionPojo);
                 if(quizResultsToQuestionPojo.getUserAnswerChoice() == question.getCorrectAnswerChoice()) {
-                    return true;
+                    rv = true;
+                    break;
                 } else {
-                    return false;
+                    rv = false;
+                    break;
                 }
             }
         }
-        return false;
+
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos2 = getQuizResultsToQuestionFromIds(dataSnapshot, question.getQuizId(), studentId);
+        List<QuizResultsToQuestionPojo> returnList = new ArrayList<>();
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos2){
+            if(quizResultsToQuestionPojo.getUserAnswerChoice() < 0){
+                returnList.add(quizResultsToQuestionPojo);
+            }
+        }
+        if(returnList.size() == 0){
+            return false;
+        }
+
+        Collections.shuffle(returnList);
+        returnList.get(0).setUserAnswerChoice(0);
+        update(myRef, returnList.get(0));
+        return true;
+        /*
+        for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : returnList){
+            if(quizResultsToQuestionPojo.getUserAnswerChoice() == 0){
+                if(returnList.size() > 1) {
+                    returnList.remove(quizResultsToQuestionPojo);
+                    Collections.shuffle(returnList);
+                    returnList.get(0).setUserAnswerChoice(0);
+                    update(myRef, returnList.get(0));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }*/
+        //return rv;
     }
 
     /**
