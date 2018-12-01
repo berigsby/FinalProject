@@ -1,13 +1,9 @@
 package edu.uga.cs4060.finalproject;
 
-import android.provider.ContactsContract;
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -729,7 +725,6 @@ public class MyFirebaseHelper {
      * Removes all the questions answered by studentId for quizId and associtations from the firebase
      * @param myRef
      * @param dataSnapshot
-     * @param classId
      * @param studentId
      * @param quizId
      */

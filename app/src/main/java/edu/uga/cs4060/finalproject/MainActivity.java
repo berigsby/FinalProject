@@ -51,10 +51,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) findViewById(R.id.textView);
-        editText = (EditText) findViewById(R.id.editText);
-        button = (Button) findViewById(R.id.button);
-
         testingButton = (Button) findViewById(R.id.testingButton);
         testingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -120,10 +115,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            */
                 //This is meant to be an example of how to do things with the database
                 /*
                 //create a teacher, a class for them, and some resources/quizzes and questions
@@ -147,8 +143,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 */
 
-                String classId = "-LS3EQGm-8kZEW5ZDAw1"; //This would be obtained initally from the teacher. The Class Code
-                String studentId = "103158840994617443644";
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1"; //This would be obtained initally from the teacher. The Class Code
+                //String studentId = "103158840994617443644";
+
+                /*
+                //Sample added a lot of resources..
+                for(int i = 0; i < 10; i++) {
+                    String title = "Res Test " + Integer.toString(i);
+                    String text = "This is the resource text. It might be really really long. Basically whatever the teacher wants " + i;
+                    ResourcePojo stevesRes1 = new ResourcePojo("", classId, title, text);
+                    stevesRes1 = MyFirebaseHelper.create(myRef,stevesRes1);
+                }
+                */
                 //MyFirebaseHelper.enroll(myRef,studentId,classId);
 
                 /*
@@ -229,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(value);
                 */
 
-            }
-        });
+            //}
+        //});
 
     }//onCreate
 
@@ -262,11 +268,11 @@ public class MainActivity extends AppCompatActivity {
     }
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if(account != (null)){
-            textView.setText(account.getEmail() + " is logged in. " + account.getId());
+            //textView.setText(account.getEmail() + " is logged in. " + account.getId());
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.signOut).setVisibility(View.VISIBLE);
             if(crudate(account)){
-                textView.append("True");
+                //textView.append("True");
             } else{
                 String name = account.getDisplayName();
                 String id = account.getId();
@@ -278,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 popUp.showNow(getSupportFragmentManager(),"hi");
             }//else
         } else {
-            textView.setText("No one is sign in");
+            //textView.setText("No one is sign in");
             findViewById(R.id.signOut).setVisibility(View.GONE);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }//else
