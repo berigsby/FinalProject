@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 /**
@@ -116,7 +117,7 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_teacher_add_quiz_title_desc, container, false);
+        final View view = inflater.inflate(R.layout.fragment_teacher_add_quiz_title_desc, container, false);
         buttonCreateQuiz = view.findViewById(R.id.buttonCreateQuiz);
         editQuizTitle = view.findViewById(R.id.editQuizTitle);
         editQuizDesc = view.findViewById(R.id.editQuizDesc);
@@ -125,6 +126,12 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
             public void onClick(View v) {
                 String description = editQuizDesc.getText().toString();
                 String title = editQuizTitle.getText().toString();
+
+                if(description.equals("")||title.equals("")){
+                    Toast.makeText(view.getContext(), "Please fill in all fields", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 Bundle args = new Bundle();
                 Fragment fragment;
                 FragmentManager fm = getFragmentManager();
@@ -132,7 +139,6 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
                 fragment = new TeacherAddQuizQuestions();
                 args.putString("description",description);
                 args.putString("title",title);
-                ft.addToBackStack(null);
                 fragment.setArguments(args);
                 ft.replace(R.id.teacherElementFragment,fragment);
                 ft.commit();
@@ -146,7 +152,7 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
 
                 QuizPojo quizPojo = new QuizPojo("",classId,editQuizTitle.getText().toString(),editQuizDesc.getText().toString());
                 MyFirebaseHelper.create(myRef,quizPojo);
-                //TODO call addquizquestions
+
 
             }
         });

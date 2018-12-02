@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,10 +40,11 @@ public class TeacherAddQuizQuestions extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private boolean goBack = false;
     String classId,teacherId,studentId,quizId;
     EditText a1,a2,a3,a4,questionTextView;
     Button doneButton, addMoreButton;
+    int count =0;
 
     //Database stuff
     DataSnapshot myDataSnapshot;
@@ -86,7 +88,7 @@ public class TeacherAddQuizQuestions extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
-
+        Log.d(TAG, "Fragment stack count" + getFragmentManager().getBackStackEntryCount());
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -121,17 +123,34 @@ public class TeacherAddQuizQuestions extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View aview = inflater.inflate(R.layout.fragment_teacher_add_quiz_questions, container, false);
+        final View aview = inflater.inflate(R.layout.fragment_teacher_add_quiz_questions, container, false);
 
+        addMoreButton = aview.findViewById(R.id.addMoreButton);
         aview.findViewById(R.id.addMoreButton).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
 
-                questionTextView = getActivity().findViewById(R.id.textView5);
-                a1 = getActivity().findViewById(R.id.a1);
-                a2 = getActivity().findViewById(R.id.a2);
-                a3 = getActivity().findViewById(R.id.a3);
-                a4 = getActivity().findViewById(R.id.a4);
+
+                questionTextView = aview.findViewById(R.id.editText5);
+                a1 = aview.findViewById(R.id.a1);
+                a2 = aview.findViewById(R.id.a2);
+                a3 = aview.findViewById(R.id.a3);
+                a4 = aview.findViewById(R.id.a4);
+
+                String question= questionTextView.getText().toString();
+                String s1 = a1.getText().toString();
+                String s2 = a2.getText().toString();
+                String s3 = a3.getText().toString();
+                String s4 = a4.getText().toString();
+
+                //Verify all fields are filled in
+                if(s1.equals("") || s2.equals("") || s3.equals("") || s4.equals("") || question.equals(""))
+                {
+                    Toast.makeText(aview.getContext(), "Please fill all fields", Toast.LENGTH_LONG).show();
+                    goBack=false;
+                    return;
+                }
+
                 RadioGroup radioGroup = getActivity().findViewById(R.id.radioGroup);
                 int selectedId = radioGroup.getCheckedRadioButtonId();
                 int ans = 0;
@@ -144,11 +163,15 @@ public class TeacherAddQuizQuestions extends Fragment {
                 } else if(selectedId == R.id.answerRadio4){
                     ans = 4;
                 } else {
-                    //TODO show error...
+                    goBack=false;
+                    Toast.makeText(aview.getContext(),"Please select the correct answer", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 QuestionPojo questionPojo = new QuestionPojo("",quizId,questionTextView.getText().toString(),
                         a1.getText().toString(),a2.getText().toString(),a3.getText().toString(),a4.getText().toString(),ans);
                 MyFirebaseHelper.create(myRef,questionPojo);
+                count++;
+
 
             }
         });
@@ -156,7 +179,15 @@ public class TeacherAddQuizQuestions extends Fragment {
         aview.findViewById(R.id.doneButton).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                addMoreButton.callOnClick();
+               if(count>0) {
+                   Toast.makeText(getContext(), "Question not recorded", Toast.LENGTH_LONG).show();
+                   /*Screw it
+                   getFragmentManager().popBackStack();
+                   getActivity().onBackPressed();*/
+                   getActivity().finish();
+               }else{
+                   Toast.makeText(getContext(), "Please add at least one question", Toast.LENGTH_LONG).show();
+               }
                 //TODO go back to the quizList
             }
         });

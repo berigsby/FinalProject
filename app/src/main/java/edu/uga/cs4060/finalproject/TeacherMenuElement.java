@@ -74,7 +74,7 @@ public class TeacherMenuElement extends AppCompatActivity{
     //Display and use the correct fragment
     private void selectFragment(int teacherSelection){
         //Select the correct fragment
-        Fragment fragment;
+        Fragment fragment = new tempBlankFragment();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Bundle args = new Bundle();
@@ -84,9 +84,6 @@ public class TeacherMenuElement extends AppCompatActivity{
                 Log.d(DEBUG_TAG, "bRes " + teacherSelection);
                 elementTextVIew.setText("Your Resources");
                 fragment = new TeacherResourcesFragment();
-                fragment.setArguments(args);
-                ft.addToBackStack(null);
-                ft.replace(R.id.teacherElementFragment,fragment);
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
@@ -110,6 +107,9 @@ public class TeacherMenuElement extends AppCompatActivity{
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 
         }
+        fragment.setArguments(args);
+        ft.addToBackStack(null);
+        ft.replace(R.id.teacherElementFragment,fragment);
         ft.commit();
     }
 
