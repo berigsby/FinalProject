@@ -133,17 +133,6 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
                     return;
                 }
 
-                Bundle args = new Bundle();
-                Fragment fragment;
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                fragment = new TeacherAddQuizQuestions();
-                args.putString("description",description);
-                args.putString("title",title);
-                fragment.setArguments(args);
-                ft.replace(R.id.teacherElementFragment,fragment);
-                ft.commit();
-
                 /***
                  * You can determine here if you want to add the title
                  * and description to the DB
@@ -152,7 +141,19 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
                 editQuizDesc = getActivity().findViewById(R.id.editQuizDesc);
 
                 QuizPojo quizPojo = new QuizPojo("",classId,editQuizTitle.getText().toString(),editQuizDesc.getText().toString());
-                MyFirebaseHelper.create(myRef,quizPojo);
+                quizPojo = MyFirebaseHelper.create(myRef,quizPojo);
+
+                Bundle args = new Bundle();
+                Fragment fragment;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                fragment = new TeacherAddQuizQuestions();
+                args.putString("description",description);
+                args.putString("title",title);
+                args.putString("quizId",quizPojo.getQuizId());
+                fragment.setArguments(args);
+                ft.replace(R.id.teacherElementFragment,fragment);
+                ft.commit();
 
 
             }

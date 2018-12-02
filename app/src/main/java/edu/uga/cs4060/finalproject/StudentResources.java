@@ -159,8 +159,6 @@ public class StudentResources extends Fragment {
         resourceListStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                String studentId = "-LS3HYIciNWJduRJAoq-";
 
                 List<ResourcePojo> resources = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
                 ResourcePojo theResource = resources.get(arg2);

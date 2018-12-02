@@ -117,6 +117,7 @@ public class TeacherAddQuizQuestions extends Fragment {
         Bundle b = getArguments();
         title = b.getString("title");
         description = b.getString("description");
+        quizId = b.getString("quizId");
     }
 
     @Override

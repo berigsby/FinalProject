@@ -93,70 +93,6 @@ public class StudentQuiz extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
-        Bundle b = getArguments();//getActivity().getIntent().getExtras();
-
-        classId = b.getString("classId");
-        studentId = b.getString("studentId");
-        quizId = b.getString("quizId");
-
-        updateQuiz = true;
-
-        quizQuestion = getActivity().findViewById(R.id.studentQuizQuestion);
-        ansChoices = getActivity().findViewById(R.id.studentQuizRadioGroup);
-        ansChoice1 = getActivity().findViewById(R.id.studentQuizRadioButton1);
-        ansChoice2 = getActivity().findViewById(R.id.studentQuizRadioButton2);
-        ansChoice3 = getActivity().findViewById(R.id.studentQuizRadioButton3);
-        ansChoice4 = getActivity().findViewById(R.id.studentQuizRadioButton4);
-        nextQuestion = getActivity().findViewById(R.id.studentQuizButtonNext);
-
-
-        //Accessing the firebase test
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference();
-
-        // Read from the database
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = "test";
-
-                myDataSnapshot = dataSnapshot;
-
-                //textView.setText(value);
-                Log.d(TAG, "Value is: " + value);
-
-                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                //String studentId = "-LS3HYIciNWJduRJAoq-"; //savedInstanceState.getString("studentId");
-                //String quizId = "-LS3EQGvMB-Ov9Oa2hK9"; //savedInstanceState.getString("quizId");
-
-                if(MyFirebaseHelper.quizContinueable(dataSnapshot,classId,studentId).equals("")){
-                    //Intent intent = new Intent(getContext(),StudentMenuActivty.class);
-                    //intent.putExtra("classId",classId);
-                    //intent.putExtra("studentId",studentId);
-                    //intent.putExtra("quizId",quizId);
-                    //startActivity(intent);
-                    //updateQuiz = false;
-                } else {
-                    updateQuiz = true;
-                }
-
-                //if(updateQuiz) {
-                    updateQuiz = false;
-                    loadQuestion(studentId, quizId);
-               // }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
     private void loadQuestion(final String studentId, final String quizId){
@@ -182,18 +118,18 @@ public class StudentQuiz extends Fragment {
         } else {
             MyFirebaseHelper.initiateQuiz(myRef,myDataSnapshot,studentId,quizId);
 
-            Fragment fragment;
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            Bundle args = new Bundle();
-            fragment = new StudentQuiz();
-            args.putString("quizId",quizId);
-            args.putString("studentId",studentId);
-            args.putString("classId",classId);
-            fragment.setArguments(args);
-            ft.replace(R.id.studentElementFragment,fragment);
+            //Fragment fragment;
+            //FragmentManager fm = getFragmentManager();
+            //FragmentTransaction ft = fm.beginTransaction();
+            //Bundle args = new Bundle();
+            //fragment = new StudentQuiz();
+            //args.putString("quizId",quizId);
+            //args.putString("studentId",studentId);
+            //args.putString("classId",classId);
+            //fragment.setArguments(args);
+            //ft.replace(R.id.studentElementFragment,fragment);
             //Log.d("############","Items " +  MoreItems[arg2] );
-            ft.commit();
+            //ft.commit();
             return;
             //questionPojo = MyFirebaseHelper.getNextQuestion(myRef,myDataSnapshot,quizId,studentId);
         }
@@ -283,7 +219,73 @@ public class StudentQuiz extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_quiz, container, false);
+        View aview = inflater.inflate(R.layout.fragment_student_quiz, container, false);
+
+        Bundle b = getArguments();//getActivity().getIntent().getExtras();
+
+        classId = b.getString("classId");
+        studentId = b.getString("studentId");
+        quizId = b.getString("quizId");
+
+        updateQuiz = true;
+
+        quizQuestion = getActivity().findViewById(R.id.studentQuizQuestion);
+        ansChoices = getActivity().findViewById(R.id.studentQuizRadioGroup);
+        ansChoice1 = getActivity().findViewById(R.id.studentQuizRadioButton1);
+        ansChoice2 = getActivity().findViewById(R.id.studentQuizRadioButton2);
+        ansChoice3 = getActivity().findViewById(R.id.studentQuizRadioButton3);
+        ansChoice4 = getActivity().findViewById(R.id.studentQuizRadioButton4);
+        nextQuestion = getActivity().findViewById(R.id.studentQuizButtonNext);
+
+
+        //Accessing the firebase test
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
+                //textView.setText(value);
+                Log.d(TAG, "Value is: " + value);
+
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                //String studentId = "-LS3HYIciNWJduRJAoq-"; //savedInstanceState.getString("studentId");
+                //String quizId = "-LS3EQGvMB-Ov9Oa2hK9"; //savedInstanceState.getString("quizId");
+
+                if(MyFirebaseHelper.quizContinueable(dataSnapshot,classId,studentId).equals("")){
+                    //Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+                    //intent.putExtra("classId",classId);
+                    //intent.putExtra("studentId",studentId);
+                    //intent.putExtra("quizId",quizId);
+                    //startActivity(intent);
+                    //updateQuiz = false;
+                } else {
+                    updateQuiz = true;
+                }
+
+                //if(updateQuiz) {
+                updateQuiz = false;
+                loadQuestion(studentId, quizId);
+                // }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        return aview;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

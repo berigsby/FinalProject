@@ -1,6 +1,7 @@
 package edu.uga.cs4060.finalproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -143,6 +144,12 @@ public class StudentQuizListFragment extends Fragment {
 
                 List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesLeft(myDataSnapshot,studentId,classId);
                 String quizId = studentQuizzesLeft.get(arg2).getQuizId();
+
+
+                String quizToFinish = MyFirebaseHelper.quizContinueable(myDataSnapshot,classId,studentId);
+                if(quizToFinish.equals("")) {
+                    MyFirebaseHelper.initiateQuiz(myRef, myDataSnapshot, studentId, quizId);
+                }
 
                 Fragment fragment;
                 FragmentManager fm = getFragmentManager();
