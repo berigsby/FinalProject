@@ -5,9 +5,26 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -21,14 +38,18 @@ import android.view.ViewGroup;
 public class TeacherQuizzesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    final String  TAG = "StudentResourcesFrag";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    ListView resourceListStudent;
     private OnFragmentInteractionListener mListener;
+    DataSnapshot myDataSnapshot;
+    DatabaseReference myRef;
 
+    String classId,studentId,quizId;
     public TeacherQuizzesFragment() {
         // Required empty public constructor
     }
@@ -59,6 +80,39 @@ public class TeacherQuizzesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
+        //Accessing the firebase test
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        Bundle b = getArguments();//getActivity().getIntent().getExtras();
+
+
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
+                //textView.setText(value);
+                Log.d(TAG, "Value is: " + value);
+
+                classId = TeacherMenuElement.classId;
+
+                List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot,classId);
+                addContentsToListView(studentQuizzesLeft);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
     }
 
     @Override
@@ -76,6 +130,30 @@ public class TeacherQuizzesFragment extends Fragment {
         }
     }
 
+
+    private void addContentsToListView(List<QuizPojo> bensClassRes){
+        String valueS = "";
+        resourceListStudent = getActivity().findViewById(R.id.quizListTeacher);
+
+//        List<String> res = new ArrayList<String>();
+        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(QuizPojo resourcePojo : bensClassRes){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", resourcePojo.getTitle());
+            data.put("subtitle", resourcePojo.getDesc());
+            //valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
+            res.add(data);
+            Log.d(TAG, resourcePojo.getTitle());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        resourceListStudent.setAdapter(arrayAdapter);
+    }
 
     @Override
     public void onDetach() {
