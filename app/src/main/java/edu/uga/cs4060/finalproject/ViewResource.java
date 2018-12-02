@@ -84,53 +84,11 @@ public class ViewResource extends Fragment {
         Bundle b = getArguments();
         //String resourceID = b.getString("resourceID");
 
-        classId = b.getString("classId");
-        studentId = b.getString("studentId");
-        teacherId = b.getString("teacherId");
+        String title = b.getString("title");
+        String description = b.getString("description");
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference();
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = "test";
-
-                myDataSnapshot = dataSnapshot;
-
-                //textView.setText(value);
-                Log.d(DEBUG_TAG, "Value is: " + value);
-
-                TextView nameViewText = view.findViewById(R.id.nameTextView);
-                TextView email = view.findViewById(R.id.email);
-                TextView textView8 = view.findViewById(R.id.textView8);
-
-                TeacherPojo teach;
-                StudentPojo stud;
-
-                if(!teacherId.equals("")) {
-                    teach = MyFirebaseHelper.getTeacher(myDataSnapshot, teacherId);
-                    nameViewText.setText("Name: "+  teach.getName());
-                    email.setText("Class Id: "+classId);
-                    textView8.setText("Teacher Id: "+teach.getTeacherId());
-                }else{
-                    stud = MyFirebaseHelper.getStudent(myDataSnapshot,studentId);
-                    nameViewText.setText("Name: "+  stud.getName());
-                    email.setText("Class Id: "+classId);
-                    textView8.setText("Teacher Id: "+stud.getId());
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(DEBUG_TAG, "Failed to read value.", error.toException());
-            }
-        });
-
+        resTitle.setText(title);
+        descriptionResView.setText(description);
 
         return view;
     }
