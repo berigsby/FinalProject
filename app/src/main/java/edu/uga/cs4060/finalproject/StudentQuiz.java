@@ -134,20 +134,20 @@ public class StudentQuiz extends Fragment {
                 //String quizId = "-LS3EQGvMB-Ov9Oa2hK9"; //savedInstanceState.getString("quizId");
 
                 if(MyFirebaseHelper.quizContinueable(dataSnapshot,classId,studentId).equals("")){
-                    Intent intent = new Intent(getContext(),StudentMenuActivty.class);
-                    intent.putExtra("classId",classId);
-                    intent.putExtra("studentId",studentId);
-                    intent.putExtra("quizId",quizId);
-                    startActivity(intent);
-                    updateQuiz = false;
+                    //Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+                    //intent.putExtra("classId",classId);
+                    //intent.putExtra("studentId",studentId);
+                    //intent.putExtra("quizId",quizId);
+                    //startActivity(intent);
+                    //updateQuiz = false;
                 } else {
                     updateQuiz = true;
                 }
 
-                if(updateQuiz) {
+                //if(updateQuiz) {
                     updateQuiz = false;
                     loadQuestion(studentId, quizId);
-                }
+               // }
 
             }
 
@@ -181,7 +181,21 @@ public class StudentQuiz extends Fragment {
             questionPojo = MyFirebaseHelper.getNextQuestion(myRef,myDataSnapshot,quizId,studentId);
         } else {
             MyFirebaseHelper.initiateQuiz(myRef,myDataSnapshot,studentId,quizId);
-            questionPojo = MyFirebaseHelper.getNextQuestion(myRef,myDataSnapshot,quizId,studentId);
+
+            Fragment fragment;
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            Bundle args = new Bundle();
+            fragment = new StudentQuiz();
+            args.putString("quizId",quizId);
+            args.putString("studentId",studentId);
+            args.putString("classId",classId);
+            fragment.setArguments(args);
+            ft.replace(R.id.studentElementFragment,fragment);
+            //Log.d("############","Items " +  MoreItems[arg2] );
+            ft.commit();
+            return;
+            //questionPojo = MyFirebaseHelper.getNextQuestion(myRef,myDataSnapshot,quizId,studentId);
         }
         if(questionPojo == null){
             //getActivity().onBackPressed();

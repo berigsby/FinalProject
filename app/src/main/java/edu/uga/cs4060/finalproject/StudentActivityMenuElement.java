@@ -60,8 +60,9 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 break;
             case R.id.bQuizHistory:
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
-                textView5.setText("Class Roster");
-                fragment = new StudentQuiz();
+                textView5.setText("Your Grades");
+                fragment = new StudentGrades();
+                fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 break;
             default:

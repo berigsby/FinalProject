@@ -4,9 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,7 +41,18 @@ public class StudentGrades extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    ListView studentGradesList;
+
     private OnFragmentInteractionListener mListener;
+
+    //Database stuff
+    DataSnapshot myDataSnapshot;
+    DatabaseReference myRef;
+
+    String classId,studentId;
+
+    //Debug
+    final String  TAG = "StudentResourcesFrag";
 
     public StudentGrades() {
         // Required empty public constructor
@@ -58,6 +83,65 @@ public class StudentGrades extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        Bundle b = getArguments();
+        classId = b.getString("classId");
+        studentId = b.getString("studentId");
+
+        //Accessing the firebase test
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
+                //textView.setText(value);
+                Log.d(TAG, "Value is: " + value);
+
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+
+                List<QuizPojo> bensClassRes = MyFirebaseHelper.getQuizzesTaken(myDataSnapshot,studentId,classId);
+                addContentsToListView(bensClassRes);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    //Add resources to the list view
+    private void addContentsToListView(List<QuizPojo> bensClassRes){
+        String valueS = "";
+        studentGradesList = getActivity().findViewById(R.id.studentGradesList);
+
+//        List<String> res = new ArrayList<String>();
+        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(QuizPojo quizPojo : bensClassRes){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", quizPojo.getTitle());
+            data.put("subtitle", MyFirebaseHelper.getGrade(myDataSnapshot,quizPojo.getQuizId(),studentId));//quizPojo.getDesc());
+            valueS = quizPojo.getTitle() + " " + quizPojo.getDesc() + "\n";
+            res.add(data);
+            Log.d(TAG, quizPojo.getTitle());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        studentGradesList.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -77,12 +161,12 @@ public class StudentGrades extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        //if (context instanceof OnFragmentInteractionListener) {
+        //    mListener = (OnFragmentInteractionListener) context;
+        //} else {
+        //    throw new RuntimeException(context.toString()
+        //            + " must implement OnFragmentInteractionListener");
+        //}
     }
 
     @Override

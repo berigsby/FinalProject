@@ -441,13 +441,15 @@ public class MyFirebaseHelper {
      */
     public static List<ResourcePojo> getResourcesFromClassId(DataSnapshot dataSnapshot, String classId){
         List<ResourcePojo> resourcePojos = getAllResources(dataSnapshot);
+        List<ResourcePojo> returnList = new ArrayList<>();
 
         for(ResourcePojo resourcePojo : resourcePojos){
-            if(! resourcePojo.getClassId().equals(classId)){
-                resourcePojos.remove(resourcePojo);
+            if(resourcePojo.getClassId().equals(classId)){
+                returnList.add(resourcePojo);
+                //!resourcePojos.remove(resourcePojo);
             }//if
         }//for
-        return resourcePojos;
+        return returnList;
     }
 
     /**
@@ -458,14 +460,16 @@ public class MyFirebaseHelper {
      */
     public static List<QuizPojo> getQuizzesFromClassId(DataSnapshot dataSnapshot, String classId){
         List<QuizPojo> quizPojos = getAllQuizzes(dataSnapshot);
+        List<QuizPojo> returnList = new ArrayList<>();
 
         for(QuizPojo quizPojo : quizPojos){
-            if(! quizPojo.getClassId().equals(classId)){
-                quizPojos.remove(quizPojo);
+            if(quizPojo.getClassId().equals(classId)){
+                returnList.add(quizPojo);
+                //!quizPojos.remove(quizPojo);
             }//if
         }//for
 
-        return quizPojos;
+        return returnList;
     }
 
     /**
@@ -476,13 +480,13 @@ public class MyFirebaseHelper {
      */
     public static List<QuestionPojo> getQuestionsFromQuizId(DataSnapshot dataSnapshot, String quizId){
         List<QuestionPojo> questionPojos = getAllQuestions(dataSnapshot);
-
+        List<QuestionPojo> returnList = new ArrayList<>();
         for(QuestionPojo questionPojo : questionPojos){
-            if(! questionPojo.getQuizId().equals(quizId)){
-                questionPojos.remove(questionPojo);
+            if(questionPojo.getQuizId().equals(quizId)){
+                returnList.add(questionPojo);
             }//if
         }//for
-        return questionPojos;
+        return returnList;
     }
 
     /**
@@ -493,13 +497,15 @@ public class MyFirebaseHelper {
      */
     public static List<ClassPojo> getClassesFromTeacherId(DataSnapshot dataSnapshot, String teacherId){
         List<ClassPojo> classPojos = getAllClasses(dataSnapshot);
+        List<ClassPojo> returnList = new ArrayList<>();
 
         for(ClassPojo classPojo : classPojos){
-            if(! classPojo.getTeacherId().equals(teacherId)){
-                classPojos.remove(classPojo);
+            if(classPojo.getTeacherId().equals(teacherId)){
+                returnList.add(classPojo);
+                //!classPojos.remove(classPojo);
             }//if
         }//for
-        return classPojos;
+        return returnList;
     }
 
     /**
@@ -661,6 +667,27 @@ public class MyFirebaseHelper {
         DatabaseReference pushRef = myRef.child(tClass.getDatabaseKey()).child(tClass.getId());
         pushRef.setValue(tClass);
     }
+
+    public static String getGrade(DataSnapshot myDataSnapshot, String quizId, String studentId){
+        int numOfQuestions = 0;
+        int numCorrect = 0;
+
+        List<QuestionPojo> questionPojos = getQuestionsFromQuizId(myDataSnapshot,quizId);
+        List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(myDataSnapshot,quizId,studentId);
+
+        for(QuestionPojo questionPojo : questionPojos){
+            for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+                if(questionPojo.getQuestionId().equals(quizResultsToQuestionPojo.getQuestionId())){
+                    numOfQuestions ++;
+                    if(questionPojo.getCorrectAnswerChoice() == quizResultsToQuestionPojo.getUserAnswerChoice()){
+                        numCorrect ++;
+                    }
+                }
+            }
+        }
+        String rv = " " + numCorrect + " correct out of " + numOfQuestions + ".";
+        return rv;
+    }//getGrade
 
     /**
      * This removes the teacherId, and any classes they have, any resources, quizzes,
