@@ -153,7 +153,7 @@ public class StudentQuizListFragment extends Fragment {
                 args.putString("studentId",studentId);
                 args.putString("classId",classId);
                 fragment.setArguments(args);
-                ft.replace(R.id.fragment2,fragment);
+                ft.replace(R.id.studentElementFragment,fragment);
                 //Log.d("############","Items " +  MoreItems[arg2] );
                 ft.commit();
             }
