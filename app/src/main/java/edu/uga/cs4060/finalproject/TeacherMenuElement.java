@@ -130,7 +130,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
-                fragment = new tempBlankFragment();
+                fragment = new TeacherAddQuizTitleDescFragment();
                 ft.replace(R.id.teacherElementFragment, fragment);
                 break;
             default:
