@@ -46,6 +46,7 @@ public class TeacherClassRoster extends Fragment {
     private String mParam1;
     private String mParam2;
     private String teacherID = "-LS3EQGb_fs76nVCm76l";
+    private String classID= TeacherMenuElement.classId;
     DataSnapshot myDataSnapshot;
     DatabaseReference myRef;
     private OnFragmentInteractionListener mListener;
@@ -81,6 +82,60 @@ public class TeacherClassRoster extends Fragment {
         }
         ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
 
+
+    }
+
+
+    //Add resources to the list view
+    private void addContentsToListView(List<StudentPojo> studentList,View view){
+        rosterListView = view.findViewById(R.id.classRosterList);
+        final List<StudentPojo> studentList2 = studentList;
+//        List<String> res = new ArrayList<String>();
+        final List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(StudentPojo stud : studentList){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", stud.getName());
+            data.put("subtitle",stud.getId());
+            res.add(data);
+            Log.d(TAG, stud.getName());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(view.getContext(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        rosterListView.setAdapter(arrayAdapter);
+        rosterListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String classId = TeacherMenuElement.classId;//TODO Remove Testing Purposes only
+
+
+                StudentPojo theStudent = studentList2.get(arg2);
+                Log.d(TAG, "Obtaining student ID: " + theStudent.getId() );
+
+                Fragment fragment;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Bundle args = new Bundle();
+                fragment = new StudentGrades();
+                args.putString("studentId",theStudent.getStudentId());
+                args.putString("classId", classId);
+                ft.addToBackStack(null);
+                fragment.setArguments(args);
+                ft.replace(R.id.teacherElementFragment,fragment);
+                ft.commit();
+            }
+        });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        final View view = inflater.inflate(R.layout.fragment_teacher_class_roster, container, false);
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
@@ -99,9 +154,8 @@ public class TeacherClassRoster extends Fragment {
                 String classId = TeacherMenuElement.classId;//TODO Remove Testing Purposes only
 
                 //Database needs to be updated so classID are included
-                //List<StudentPojo> allStudents = MyFirebaseHelper.getAllStudents(myDataSnapshot);
-                //List<ClassPojo>
-                //addContentsToListView(bensClassRes);
+                List<StudentPojo> allStudents = MyFirebaseHelper.getStudentsFromClassId(myDataSnapshot,classId);
+                addContentsToListView(allStudents,view);
             }
 
             @Override
@@ -110,38 +164,6 @@ public class TeacherClassRoster extends Fragment {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-    }
-
-
-    //Add resources to the list view
-    private void addContentsToListView(List<StudentPojo> studentList){
-        rosterListView = getActivity().findViewById(R.id.ResourceListView);
-
-//        List<String> res = new ArrayList<String>();
-        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
-        for(StudentPojo stud : studentList){
-            Map<String,String> data = new HashMap<String,String>(2);
-            data.put("title", stud.getName());
-            data.put("subtitle",stud.getId());
-            res.add(data);
-            Log.d(TAG, stud.getName());
-        }
-
-        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
-                res,
-                android.R.layout.simple_list_item_2,
-                new String[]{"title", "subtitle"},
-                new int[]{android.R.id.text1, android.R.id.text2});
-
-        rosterListView.setAdapter(arrayAdapter);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_teacher_class_roster, container, false);
-
 
         return view;
     }
