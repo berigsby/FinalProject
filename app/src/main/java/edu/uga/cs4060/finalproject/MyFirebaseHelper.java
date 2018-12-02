@@ -518,14 +518,15 @@ public class MyFirebaseHelper {
         ArrayList<ClassPojo> returnList = new ArrayList<>();
 
         List<IdHolder> idHolders = getRelationTable(dataSnapshot,"enrollment");
+        List<IdHolder> idHoldersToAddTo = new ArrayList<>();
         for(IdHolder idHolder : idHolders){
-            if(! idHolder.getStudentId().equals(studentId)){
-                idHolders.remove(idHolder);
+            if(idHolder.getStudentId().equals(studentId)){
+                idHoldersToAddTo.add(idHolder);
             }//if
         }//for
 
-        for(int i = 0; i < idHolders.size(); i ++){
-            returnList.add(getClass(dataSnapshot, idHolders.get(i).getClassId()));
+        for(int i = 0; i < idHoldersToAddTo.size(); i ++){
+            returnList.add(getClass(dataSnapshot, idHoldersToAddTo.get(i).getClassId()));
         }
 
         return returnList;

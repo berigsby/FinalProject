@@ -31,6 +31,7 @@
             android:name=".StudentActivityMenuElement"
             android:label="@string/title_activity_student_menu_element"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ClassList"></activity>
     </application>
 
 </manifest>

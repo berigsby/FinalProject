@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         testingButton = (Button) findViewById(R.id.testingButton);
         testingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        */
 
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -85,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
                 myDataSnapshot = dataSnapshot;
 
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .build();
+
+                // Build a GoogleSignInClient with the options specified by gso.
+                mGoogleSignInClient = GoogleSignIn.getClient(getBaseContext(), gso);
+
+                // Check for existing Google Sign In account, if the user is already signed in
+                // the GoogleSignInAccount will be non-null.
+                final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+
+                updateUI(account);
                 //textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
             }
@@ -108,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
+        //updateUI(account);
 
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener(){
             @Override
@@ -118,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
         findViewById(R.id.signOut).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -125,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 updateUI(null);
             }
         });
+        */
 
         /*
         button.setOnClickListener(new View.OnClickListener() {
@@ -274,30 +290,51 @@ public class MainActivity extends AppCompatActivity {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(null);
+            //updateUI(null);
         }
     }
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if(account != (null)){
             //textView.setText(account.getEmail() + " is logged in. " + account.getId());
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.signOut).setVisibility(View.VISIBLE);
+            //findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            //findViewById(R.id.signOut).setVisibility(View.VISIBLE);
+            String id;
             if(crudate(account)){
                 //textView.append("True");
+                id = account.getId();
+
+                boolean isTeacher = false;
+                List<TeacherPojo> teacherPojos = MyFirebaseHelper.getAllTeachers(myDataSnapshot);
+                for(TeacherPojo teacherPojo : teacherPojos){
+                    if(teacherPojo.getTeacherId().equals(id)){
+                        isTeacher = true;
+                    }
+                }
+                //List<StudentPojo> studentPojos = MyFirebaseHelper.getAllStudents(myDataSnapshot);
+                Intent intent = new Intent(getBaseContext(),ClassList.class);
+                if(isTeacher){
+                    intent.putExtra("teacherId", id);
+                } else {
+                    intent.putExtra("studentId", id);
+                }
+                startActivity(intent);
             } else{
                 String name = account.getDisplayName();
-                String id = account.getId();
+                id = account.getId();
 
                 PopUpTeacherOrStudent popUp = new PopUpTeacherOrStudent();
                 popUp.setTheId(id);
                 popUp.setName(name);
                 popUp.setMyRef(myRef);
                 popUp.showNow(getSupportFragmentManager(),"hi");
+                //updateUI(account);
             }//else
+
+
         } else {
             //textView.setText("No one is sign in");
-            findViewById(R.id.signOut).setVisibility(View.GONE);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            //findViewById(R.id.signOut).setVisibility(View.GONE);
+            //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }//else
     }
 
