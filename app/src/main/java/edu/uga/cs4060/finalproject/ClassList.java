@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -30,9 +31,10 @@ public class ClassList extends AppCompatActivity {
 
     String personId;
     boolean isTeacher;
-    TextView classListLoggedInAs;
+    TextView classListLoggedInAs,titleView,descView;
+    EditText titleEdit,descEdit;
     ListView classListView;
-    Button classListSignOutButton;
+    Button classListSignOutButton,addClassButton;
 
     //Database stuff
     DataSnapshot myDataSnapshot;
@@ -50,9 +52,14 @@ public class ClassList extends AppCompatActivity {
         classListSignOutButton = findViewById(R.id.classListSignOutbutton);
         classListView = findViewById(R.id.classList);
         classListLoggedInAs = findViewById(R.id.classListLoggedInAs);
+        titleView = findViewById(R.id.textViewClassListTitle);
+        descView = findViewById(R.id.textViewClassListDesc);
+        titleEdit = findViewById(R.id.editTextClassListTitle);
+        descEdit = findViewById(R.id.editTextClassListDesc);
+        addClassButton = findViewById(R.id.addClassButton);
 
         Bundle b = getIntent().getExtras();
-        String studentId = b.getString("studentId");
+        final String studentId = b.getString("studentId");
         final String teacherId = b.getString("teacherId");
         isTeacher = false;
 
@@ -67,6 +74,10 @@ public class ClassList extends AppCompatActivity {
         } else {
             isTeacher = false;
             personId = studentId;
+            titleView.setVisibility(View.GONE);
+            titleEdit.setVisibility(View.GONE);
+            descView.setText("ClassId:");
+            addClassButton.setText("Enroll");
         }
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -126,6 +137,45 @@ public class ClassList extends AppCompatActivity {
                 mGoogleSignInClient.signOut();
                 Intent intent = new Intent(getBaseContext(),MainActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        addClassButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String descText = descEdit.getText().toString();
+                String titleText = titleEdit.getText().toString();
+                if(descText.equals("")){
+                    //TODO add popup fail no desc or classId specified
+                } else{
+                    if (isTeacher && titleText.equals("")) {
+                        //TODO add popup fail no title entered
+                    } else if (isTeacher){
+                        //Create a teacher class
+                        ClassPojo classPojo = new ClassPojo("",personId,titleText,descText);
+                        classPojo = MyFirebaseHelper.create(myRef,classPojo);
+                        Intent intent = new Intent(getBaseContext(),TeacherMenuActivity.class);
+                        intent.putExtra("classId", classPojo.getClassId());
+                        intent.putExtra("teacherId", personId);
+                        startActivity(intent);
+                    } else {
+                        //Enroll student if class id works
+                        String classId = descText;
+                        ClassPojo classPojo = MyFirebaseHelper.getClass(myDataSnapshot,classId);
+                        if(classPojo == null){
+                            //TODO add popup fail noclass with id
+                        } else {
+                            MyFirebaseHelper.enroll(myRef,personId,classId);
+                            Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
+                            intent.putExtra("classId",classId);
+                            intent.putExtra("studentId",personId);
+                            startActivity(intent);
+                        }
+                    }
+                }
+
+                descEdit.setText("");
+                titleEdit.setText("");
             }
         });
 
