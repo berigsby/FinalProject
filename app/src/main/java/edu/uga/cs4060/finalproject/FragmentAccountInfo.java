@@ -101,7 +101,7 @@ public class FragmentAccountInfo extends Fragment {
 
                 TeacherPojo teach;
                 StudentPojo stud;
-                if(!teacherId.equals("")) {
+                if(teacherId != null) {
                     teach = MyFirebaseHelper.getTeacher(myDataSnapshot, teacherId);
                     Log.d(DEBUG_TAG, teach.getName() + teach.getId() + teach.getTeacherId());
                     nameViewText.setText(("Name: "+  teach.getName()));

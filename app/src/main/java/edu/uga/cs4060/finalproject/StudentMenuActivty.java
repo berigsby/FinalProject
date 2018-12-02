@@ -31,7 +31,8 @@ public class StudentMenuActivty extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_menu_activty);
         Intent intent = getIntent();
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.hide();
         classId = intent.getStringExtra("classId");
         studentId = intent.getStringExtra("studentId");
 
