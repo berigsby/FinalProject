@@ -24,7 +24,8 @@ public class QuestionPojo extends FirebasePojo{
         correctAnswerChoice = -1;
     }
 
-    public QuestionPojo(String questionId, String quizId, String questionText, String answer1, String answer2, String answer3, String answer4, int correctAnswerChoice) {
+    public QuestionPojo(String questionId, String quizId, String questionText,
+                        String answer1, String answer2, String answer3, String answer4, int correctAnswerChoice) {
         this.questionId = questionId;
         this.quizId = quizId;
         this.questionText = questionText;
