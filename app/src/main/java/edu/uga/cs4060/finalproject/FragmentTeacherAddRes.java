@@ -3,11 +3,19 @@ package edu.uga.cs4060.finalproject;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -18,8 +26,9 @@ import android.widget.Button;
  * Use the {@link FragmentTeacherAddRes#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentTeacherAddRes extends Fragment {
+public class FragmentTeacherAddRes extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -29,9 +38,16 @@ public class FragmentTeacherAddRes extends Fragment {
     private String mParam2;
 
     private String classID ="-LS3EQGm-8kZEW5ZDAw1";
+
+    private View aview;
+    //Database stuff
+    DatabaseReference myRef;
+
     private OnFragmentInteractionListener mListener;
 
+    //Primary UI
     private Button bAddResource;
+    private EditText titleTextView, descriptionTextView;
     public FragmentTeacherAddRes() {
         // Required empty public constructor
     }
@@ -61,14 +77,54 @@ public class FragmentTeacherAddRes extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
     }
 
+    /***
+     * Verify that EditText are not blank and add them to the
+     * Firebase
+     */
+    public void addResource(){
+        //Verify resources are properly filled in
+        if(titleTextView.getText().toString().trim().equals(null) ||
+                descriptionTextView.getText().toString().trim().equals(null) ||
+                titleTextView.getText().toString().trim().equals("") ||
+                descriptionTextView.getText().toString().trim().equals("")){
+            Toast.makeText(getContext(), "Please make sure fields are not empty", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            String title = titleTextView.getText().toString().trim();
+            String text = descriptionTextView.getText().toString().trim();
+            ResourcePojo stevesRes1 = new ResourcePojo("", classID, title, text);
+            //stevesRes1 = MyFirebaseHelper.create(myRef,stevesRes1);
+
+            //Return to the previous fragment to review the added resource
+            getFragmentManager().popBackStack();
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_add_res, container, false);
+        aview =  inflater.inflate(R.layout.fragment_teacher_add_res, container, false);
+
+        //Firebase addtion
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        //UI elements
+        bAddResource = aview.findViewById(R.id.bAddResource);
+        descriptionTextView = aview.findViewById(R.id.addResourceText);
+        titleTextView = aview.findViewById(R.id.titleTextView);
+
+        bAddResource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addResource();
+            }
+        });
+
+        return aview;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

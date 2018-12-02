@@ -60,14 +60,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        benTesting = (Button) findViewById(R.id.ben_testing);
-        benTesting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
-                startActivity(intent);
-            }
-        });
+//        benTesting = (Button) findViewById(R.id.ben_testing);
+//        benTesting.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
+//                startActivity(intent);
+//            }
+//        });
 
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();

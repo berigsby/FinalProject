@@ -3,6 +3,7 @@ package edu.uga.cs4060.finalproject;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -81,14 +82,13 @@ public class TeacherResourcesFragment extends Fragment{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         Log.d("TeacherFragRes", "Accessed");
-
-
+        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
         // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -124,7 +124,7 @@ public class TeacherResourcesFragment extends Fragment{
             Map<String,String> data = new HashMap<String,String>(2);
             data.put("title", resourcePojo.getTitle());
             data.put("subtitle", resourcePojo.getText());
-            //valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
+            valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
             res.add(data);
             Log.d(TAG, resourcePojo.getTitle());
         }
@@ -136,8 +136,6 @@ public class TeacherResourcesFragment extends Fragment{
                 new int[]{android.R.id.text1, android.R.id.text2});
 
         resourceListView.setAdapter(arrayAdapter);
-
-
     }
 
     @Override
@@ -155,23 +153,6 @@ public class TeacherResourcesFragment extends Fragment{
         }
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
      * This interface must be implemented by activities that contain this
