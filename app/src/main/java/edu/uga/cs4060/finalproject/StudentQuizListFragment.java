@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import edu.uga.cs4060.finalproject.dummy.DummyContent;
 import edu.uga.cs4060.finalproject.dummy.DummyContent.DummyItem;
 
 import java.util.ArrayList;
@@ -36,7 +32,7 @@ import java.util.Map;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class StudentResourceFragment extends Fragment {
+public class StudentQuizListFragment extends Fragment {
 
     final String  TAG = "StudentResourcesFrag";
 
@@ -51,17 +47,19 @@ public class StudentResourceFragment extends Fragment {
     DataSnapshot myDataSnapshot;
     DatabaseReference myRef;
 
+    String classId,studentId,quizId;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StudentResourceFragment() {
+    public StudentQuizListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static StudentResourceFragment newInstance(int columnCount) {
-        StudentResourceFragment fragment = new StudentResourceFragment();
+    public static StudentQuizListFragment newInstance(int columnCount) {
+        StudentQuizListFragment fragment = new StudentQuizListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -79,8 +77,13 @@ public class StudentResourceFragment extends Fragment {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
+        Bundle b = getArguments();//getActivity().getIntent().getExtras();
+        classId = b.getString("classId");
+        studentId = b.getString("studentId");
+        quizId = b.getString("quizId");
+
         // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -92,8 +95,8 @@ public class StudentResourceFragment extends Fragment {
                 //textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
 
-                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                String studentId = "-LS3HYIciNWJduRJAoq-";
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                //String studentId = "-LS3HYIciNWJduRJAoq-";
 
                 List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesLeft(myDataSnapshot,studentId,classId);
                 addContentsToListView(studentQuizzesLeft);
@@ -135,18 +138,20 @@ public class StudentResourceFragment extends Fragment {
         resourceListStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                String studentId = "-LS3HYIciNWJduRJAoq-";
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                //String studentId = "-LS3HYIciNWJduRJAoq-";
 
                 List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesLeft(myDataSnapshot,studentId,classId);
                 String quizId = studentQuizzesLeft.get(arg2).getQuizId();
+
                 Fragment fragment;
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 Bundle args = new Bundle();
                 fragment = new StudentQuiz();
                 args.putString("quizId",quizId);
-                args.putString("studentId","-LS3HYIciNWJduRJAoq-");
+                args.putString("studentId",studentId);
+                args.putString("classId",classId);
                 fragment.setArguments(args);
                 ft.replace(R.id.fragment2,fragment);
                 //Log.d("############","Items " +  MoreItems[arg2] );

@@ -562,7 +562,16 @@ public class MyFirebaseHelper {
         for(IdHolder idHolder : idHolders){
             for(QuizPojo quizPojo : quizPojos){
                 if(idHolder.getQuizId().equals(quizPojo.getQuizId()) && idHolder.getStudentId().equals(studentId)){
-                    returnList.add(quizPojo);
+                    List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot,quizPojo.getQuizId(),studentId);
+                    boolean zeroFound = false;
+                    for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : quizResultsToQuestionPojos){
+                        if( quizResultsToQuestionPojo.getUserAnswerChoice() <= 0){
+                            zeroFound = true;
+                        }
+                    }
+                    if(!zeroFound) {
+                        returnList.add(quizPojo);
+                    }
                 }//if
             }//for
         }//for
@@ -580,10 +589,20 @@ public class MyFirebaseHelper {
     public static List<QuizPojo> getQuizzesLeft(DataSnapshot dataSnapshot, String studentId, String classId){
         List<QuizPojo> allQuizzes = getQuizzesFromClassId(dataSnapshot, classId);
         List<QuizPojo> quizzesTaken = getQuizzesTaken(dataSnapshot,studentId,classId);
-        for( QuizPojo quiz : quizzesTaken){
-            allQuizzes.remove(quiz);
+        List<QuizPojo> returnList = new ArrayList<>();
+        for( QuizPojo allQuiz : allQuizzes){
+            boolean found = false;
+            for(QuizPojo quizTaken : quizzesTaken) {
+                if(allQuiz.getQuizId().equals(quizTaken.getQuizId())){
+                    found = true;
+                    //allQuizzes.remove(allQuiz);
+                }
+            }
+            if(!found){
+                returnList.add(allQuiz);
+            }
         }
-        return allQuizzes;
+        return returnList;
     }
 
     /**

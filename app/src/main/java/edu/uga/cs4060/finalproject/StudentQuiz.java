@@ -53,6 +53,7 @@ public class StudentQuiz extends Fragment {
     RadioButton ansChoice1,ansChoice2,ansChoice3,ansChoice4;
     RadioGroup ansChoices;
     boolean updateQuiz;
+    String classId,quizId,studentId;
 
     Button nextQuestion;
 
@@ -93,6 +94,13 @@ public class StudentQuiz extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+
+        Bundle b = getArguments();//getActivity().getIntent().getExtras();
+
+        classId = b.getString("classId");
+        studentId = b.getString("studentId");
+        quizId = b.getString("quizId");
+
         updateQuiz = true;
 
         quizQuestion = getActivity().findViewById(R.id.studentQuizQuestion);
@@ -121,12 +129,15 @@ public class StudentQuiz extends Fragment {
                 //textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
 
-                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-                String studentId = "-LS3HYIciNWJduRJAoq-"; //savedInstanceState.getString("studentId");
-                String quizId = "-LS3EQGvMB-Ov9Oa2hK9"; //savedInstanceState.getString("quizId");
+                //String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                //String studentId = "-LS3HYIciNWJduRJAoq-"; //savedInstanceState.getString("studentId");
+                //String quizId = "-LS3EQGvMB-Ov9Oa2hK9"; //savedInstanceState.getString("quizId");
 
                 if(MyFirebaseHelper.quizContinueable(dataSnapshot,classId,studentId).equals("")){
                     Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+                    intent.putExtra("classId",classId);
+                    intent.putExtra("studentId",studentId);
+                    intent.putExtra("quizId",quizId);
                     startActivity(intent);
                     updateQuiz = false;
                 } else {
@@ -149,7 +160,7 @@ public class StudentQuiz extends Fragment {
     }
 
     private void loadQuestion(final String studentId, final String quizId){
-        String classId = "-LS3EQGm-8kZEW5ZDAw1";
+        //String classId = "-LS3EQGm-8kZEW5ZDAw1";
         final QuestionPojo questionPojo;
         String quizToFinish = MyFirebaseHelper.quizContinueable(myDataSnapshot,classId,studentId);
         if(!quizToFinish.equals(quizId)){
@@ -157,6 +168,9 @@ public class StudentQuiz extends Fragment {
                 //getActivity().onBackPressed();
 
                 Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+                intent.putExtra("classId",classId);
+                intent.putExtra("studentId",studentId);
+                intent.putExtra("quizId",quizId);
                 startActivity(intent);
                 return;
             }
@@ -172,6 +186,9 @@ public class StudentQuiz extends Fragment {
         if(questionPojo == null){
             //getActivity().onBackPressed();
             Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+            intent.putExtra("classId",classId);
+            intent.putExtra("studentId",studentId);
+            intent.putExtra("quizId",quizId);
             startActivity(intent);
             return;
         }
@@ -213,11 +230,30 @@ public class StudentQuiz extends Fragment {
                 if(ans != -1) {
                     boolean anotherQ = MyFirebaseHelper.markQuestion(myRef, myDataSnapshot, questionPojo, studentId, ans);
                     if ( anotherQ ) {
-                        Intent intent = new Intent(getActivity().getBaseContext(), StudentActivityMenuElement.class);
-                        intent.putExtra("buttonID", R.id.bQuizzes2); //getActivity().findViewById(R.id.bQuizzes2).getId());
-                        startActivity(intent);
+                        Fragment fragment;
+                        FragmentManager fm = getFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        Bundle args = new Bundle();
+                        fragment = new StudentQuiz();
+                        args.putString("quizId",quizId);
+                        args.putString("studentId",studentId);
+                        args.putString("classId",classId);
+                        fragment.setArguments(args);
+                        ft.replace(R.id.fragment2,fragment);
+                        //Log.d("############","Items " +  MoreItems[arg2] );
+                        ft.commit();
+                        //Intent intent = new Intent(getActivity().getBaseContext(), StudentActivityMenuElement.class);
+                        //intent.putExtra("classId",classId);
+                        //intent.putExtra("studentId",studentId);
+                        //intent.putExtra("quizId",quizId);
+                        //intent.putExtra("buttonID", R.id.bQuizzes2); //getActivity().findViewById(R.id.bQuizzes2).getId());
+                        //startActivity(intent);
                     } else {
-                        Intent intent = new Intent(getContext(),StudentMenuActivty.class);
+                        Intent intent = new Intent(getContext(),StudentActivityMenuElement.class);//
+                        intent.putExtra("classId",classId);
+                        intent.putExtra("studentId",studentId);
+                        intent.putExtra("quizId",quizId);
+                        intent.putExtra("buttonID", R.id.bQuizzes2);//
                         startActivity(intent);
                     }
                     //updateQuiz = true;

@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import edu.uga.cs4060.finalproject.StudentResourceFragment.OnListFragmentInteractionListener;
+import edu.uga.cs4060.finalproject.StudentQuizListFragment.OnListFragmentInteractionListener;
 import edu.uga.cs4060.finalproject.dummy.DummyContent.DummyItem;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class MyResourceRecyclerViewAdapter extends RecyclerView.Adapter<MyResour
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_resource_student, parent, false);
+                .inflate(R.layout.fragment_quizlist_student, parent, false);
         return new ViewHolder(view);
     }
 

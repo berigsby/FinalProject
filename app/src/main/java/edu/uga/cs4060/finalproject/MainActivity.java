@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
+                intent.putExtra("classId","-LS3EQGm-8kZEW5ZDAw1");
+                intent.putExtra("studentId","-LS3HYIciNWJduRJAoq-");
                 startActivity(intent);
             }
         });

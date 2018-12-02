@@ -12,11 +12,16 @@ import android.widget.Button;
 public class StudentMenuActivty extends AppCompatActivity implements View.OnClickListener {
 
     Button bRes2, bQuizzes2,bQuizHistory;
+    String classId,studentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_menu_activty);
+        Intent intent = getIntent();
+
+        classId = intent.getStringExtra("classId");
+        studentId = intent.getStringExtra("studentId");
 
         bRes2 = findViewById(R.id.bRes2); //id : 0
         bRes2.setOnClickListener(this);
@@ -31,6 +36,8 @@ public class StudentMenuActivty extends AppCompatActivity implements View.OnClic
         Intent intent = new Intent(getBaseContext(), StudentActivityMenuElement.class);
         if(v.getId() != R.id.bSync){
             //Log.d(DEBUG_TAG, "Using Button ID" + v.getId());
+            intent.putExtra("classId", classId);
+            intent.putExtra("studentId",studentId);
             intent.putExtra("buttonID", v.getId());
             startActivity(intent);
         }
