@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -83,11 +86,45 @@ public class StudentResources extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
         Bundle b = getArguments();
         classId = b.getString("classId");
         studentId = b.getString("studentId");
 
+    }
+
+    //Add resources to the list view
+    private void addContentsToListView(List<ResourcePojo> bensClassRes){
+        String valueS = "";
+
+        resourceListStudent = getActivity().findViewById(R.id.ResourceListStudent);
+
+//        List<String> res = new ArrayList<String>();
+        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(ResourcePojo resourcePojo : bensClassRes){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", resourcePojo.getTitle());
+            data.put("subtitle", resourcePojo.getText());
+            valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
+            res.add(data);
+            Log.d(TAG, resourcePojo.getTitle());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        resourceListStudent.setAdapter(arrayAdapter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+        View view = inflater.inflate(R.layout.fragment_student_resources, container, false);
+        resourceListStudent = view.findViewById(R.id.ResourceListStudent);
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -117,38 +154,34 @@ public class StudentResources extends Fragment {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-    }
 
-    //Add resources to the list view
-    private void addContentsToListView(List<ResourcePojo> bensClassRes){
-        String valueS = "";
-        resourceListStudent = getActivity().findViewById(R.id.ResourceListStudent);
 
-//        List<String> res = new ArrayList<String>();
-        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
-        for(ResourcePojo resourcePojo : bensClassRes){
-            Map<String,String> data = new HashMap<String,String>(2);
-            data.put("title", resourcePojo.getTitle());
-            data.put("subtitle", resourcePojo.getText());
-            valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
-            res.add(data);
-            Log.d(TAG, resourcePojo.getTitle());
-        }
+        resourceListStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                String studentId = "-LS3HYIciNWJduRJAoq-";
 
-        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
-                res,
-                android.R.layout.simple_list_item_2,
-                new String[]{"title", "subtitle"},
-                new int[]{android.R.id.text1, android.R.id.text2});
+                List<ResourcePojo> resources = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
+                ResourcePojo theResource = resources.get(arg2);
+                Log.d(TAG, "Obtaining resource ID: " + theResource.getResourceId() );
 
-        resourceListStudent.setAdapter(arrayAdapter);
-    }
+                Fragment fragment;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Bundle args = new Bundle();
+                fragment = new ViewResource();
+                args.putString("resourceID",theResource.getResourceId());
+                args.putString("title",theResource.getTitle());
+                args.putString("description",theResource.getText());
+                ft.addToBackStack(null);
+                fragment.setArguments(args);
+                ft.replace(R.id.studentElementFragment,fragment);
+                ft.commit();
+            }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_resources, container, false);
+        });
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

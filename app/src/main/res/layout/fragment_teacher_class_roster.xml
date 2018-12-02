@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".TeacherClassRoster">
 
-    <TextView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Class Roster Fragment"
         android:gravity="center"
         android:textSize="30sp"/>
 
