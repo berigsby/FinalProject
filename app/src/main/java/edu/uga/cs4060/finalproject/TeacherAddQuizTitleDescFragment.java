@@ -5,9 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 
 /**
@@ -23,6 +27,9 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    Button buttonCreateQuiz;
+    EditText editQuizTitle, editQuizDesc;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,8 +72,34 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_add_quiz_title_desc, container, false);
+        View view = inflater.inflate(R.layout.fragment_teacher_add_quiz_title_desc, container, false);
+        buttonCreateQuiz = view.findViewById(R.id.buttonCreateQuiz);
+        editQuizTitle = view.findViewById(R.id.editQuizTitle);
+        editQuizDesc = view.findViewById(R.id.editQuizDesc);
+        buttonCreateQuiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String description = editQuizDesc.getText().toString();
+                String title = editQuizTitle.getText().toString();
+                Bundle args = new Bundle();
+                Fragment fragment;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                fragment = new TeacherAddQuizQuestions();
+                args.putString("description",description);
+                args.putString("title",title);
+                ft.addToBackStack(null);
+                fragment.setArguments(args);
+                ft.replace(R.id.teacherElementFragment,fragment);
+                ft.commit();
+
+                /***
+                 * You can determine here if you want to add the title
+                 * and description to the DB
+                 */
+            }
+        });
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
