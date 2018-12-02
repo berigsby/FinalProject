@@ -4,10 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -23,11 +30,15 @@ public class ViewResource extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    String classId;
+    String studentId;
+    String teacherId;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    DataSnapshot myDataSnapshot;
+    DatabaseReference myRef;
+    final String DEBUG_TAG = "ViewResourcesF";
     private OnFragmentInteractionListener mListener;
 
     public ViewResource() {
@@ -65,18 +76,20 @@ public class ViewResource extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_view_resource, container, false);
+        final View view = inflater.inflate(R.layout.fragment_view_resource, container, false);
 
         // Inflate the layout for this fragment
         TextView resTitle = view.findViewById(R.id.ResTitle);
         TextView descriptionResView = view.findViewById(R.id.descriptionResView);
         Bundle b = getArguments();
         //String resourceID = b.getString("resourceID");
+
         String title = b.getString("title");
         String description = b.getString("description");
 
         resTitle.setText(title);
         descriptionResView.setText(description);
+
         return view;
     }
 

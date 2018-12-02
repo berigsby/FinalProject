@@ -1,6 +1,7 @@
 package edu.uga.cs4060.finalproject;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -40,6 +41,7 @@ public class TeacherMenuElement extends AppCompatActivity{
         teacherSelectionp2 = teacherSelection;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setImageResource(android.R.drawable.ic_input_add);
+        fab.setColorFilter(Color.WHITE);
         fab.show();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,24 +68,35 @@ public class TeacherMenuElement extends AppCompatActivity{
                 Log.d(DEBUG_TAG, "bRes " + teacherSelection);
                 elementTextVIew.setText("Your Resources");
                 fragment = new TeacherResourcesFragment();
+                ft.replace(R.id.teacherElementFragment,fragment);
+                fragment.setArguments(args);
+                ft.addToBackStack(null);
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
                 elementTextVIew.setText("Class Quizzes");
                 fragment = new TeacherQuizzesFragment();
                 ft.replace(R.id.teacherElementFragment,fragment);
+                fragment.setArguments(args);
+                ft.addToBackStack(null);
                 break;
             case R.id.bClassList:
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
                 elementTextVIew.setText("Class Roster");
                 fragment = new TeacherClassRoster();
                 ft.replace(R.id.teacherElementFragment,fragment);
+                fragment.setArguments(args);
+                ft.addToBackStack(null);
                 break;
-            case R.id.bAccountInfo2:
+            case R.id.bAccountInfo:
                 Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelection);
                 elementTextVIew.setText("Account Information");
                 fragment = new FragmentAccountInfo();
+                args.putString("teacherId",teacherId);
+                args.putString("classId",classId);
                 ft.replace(R.id.teacherElementFragment,fragment);
+                fragment.setArguments(args);
+                ft.addToBackStack(null);
                 FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                 fab.hide();
                 break;
@@ -91,8 +104,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 
         }
-        fragment.setArguments(args);
-        ft.addToBackStack(null);
+
         ft.replace(R.id.teacherElementFragment,fragment);
         ft.commit();
     }
