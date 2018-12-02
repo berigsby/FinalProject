@@ -3,6 +3,7 @@ package edu.uga.cs4060.finalproject;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -23,14 +24,21 @@ public class PopUpTeacherOrStudent extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         teacherOrStudent = "student";
                         MyFirebaseHelper.createAccount(myRef, new StudentPojo(theid, name));
+                        Intent intent = new Intent(getActivity().getBaseContext(),ClassList.class);
+                        intent.putExtra("studentId", id);
+                        startActivity(intent);
                     }
                 })
                 .setNegativeButton("Teacher", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         teacherOrStudent = "teacher";
                         MyFirebaseHelper.createAccount(myRef, new TeacherPojo(name, theid));
+                        Intent intent = new Intent(getActivity().getBaseContext(),ClassList.class);
+                        intent.putExtra("teacherId", id);
+                        startActivity(intent);
                     }
                 });
+
         // Create the AlertDialog object and return it
         return builder.create();
     }
