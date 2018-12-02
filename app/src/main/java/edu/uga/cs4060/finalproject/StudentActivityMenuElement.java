@@ -32,12 +32,14 @@ public class StudentActivityMenuElement extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Bundle args = new Bundle();
+        args.putString("classId",classId);
+        args.putString("studentId",studentId);
 
         switch(teacherSelection){
             case R.id.bRes2:
                 Log.d(DEBUG_TAG, "bRes " + teacherSelection);
                 textView5.setText("Your Resources");
-                fragment = new TeacherResourcesFragment();
+                fragment = new StudentResources();
                 fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 break;
@@ -45,13 +47,11 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
                 textView5.setText("Class Quizzes");
                 //Intent intent1 = new Intent(getBaseContext(),StudentQuiz.class);
-                fragment = new StudentQuizListFragment();//TODO change this to go to the quizlist
-                args.putString("classId",classId);
-                args.putString("studentId",studentId);
+                fragment = new StudentQuizListFragment();
                 fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 /*
-                fragment = new StudentQuiz();//TODO change this to go to the quizlist
+                fragment = new StudentQuiz();
                 args.putString("quizId","-LS3EQGvMB-Ov9Oa2hK9");
                 args.putString("studentId","-LS3HYIciNWJduRJAoq-");
                 fragment.setArguments(args);
