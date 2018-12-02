@@ -28,6 +28,10 @@ public class TeacherMenuActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_menu);
+        Intent intent = getIntent();
+
+        classId = intent.getStringExtra("classId");
+        teacherId = intent.getStringExtra("teacherId");
 
         bRes = findViewById(R.id.bRes); //id : 0
         bRes.setOnClickListener(this);
@@ -38,8 +42,9 @@ public class TeacherMenuActivity extends AppCompatActivity implements View.OnCli
         bAccountInfo2 = findViewById(R.id.bAccountInfo); //id : 3
         bAccountInfo2.setOnClickListener(this);
 
-        classId = "-LS3EQGm-8kZEW5ZDAw1";
-        teacherId ="-LS3EQGb_fs76nVCm76l";
+        //classId = "-LS3EQGm-8kZEW5ZDAw1";
+        //teacherId ="-LS3EQGb_fs76nVCm76l";
+
 
 //        DataSnapshot myDataSnapshot;
 //        DatabaseReference myRef;
@@ -79,8 +84,6 @@ public class TeacherMenuActivity extends AppCompatActivity implements View.OnCli
             }
         });
     }
-
-
 
     @Override
     public void onClick(View v){

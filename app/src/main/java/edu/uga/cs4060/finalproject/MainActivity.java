@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
     GoogleSignInClient mGoogleSignInClient;
 
+    MyEventListener myEventListener;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,37 +81,8 @@ public class MainActivity extends AppCompatActivity {
         myRef = database.getReference();
 
         // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = "test";
-
-                myDataSnapshot = dataSnapshot;
-
-                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestEmail()
-                        .build();
-
-                // Build a GoogleSignInClient with the options specified by gso.
-                mGoogleSignInClient = GoogleSignIn.getClient(getBaseContext(), gso);
-
-                // Check for existing Google Sign In account, if the user is already signed in
-                // the GoogleSignInAccount will be non-null.
-                final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
-
-                updateUI(account);
-                //textView.setText(value);
-                Log.d(TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+        myEventListener = new MyEventListener();
+        myRef.addValueEventListener(myEventListener);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -336,6 +310,46 @@ public class MainActivity extends AppCompatActivity {
             //findViewById(R.id.signOut).setVisibility(View.GONE);
             //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }//else
+    }
+
+    private class MyEventListener implements ValueEventListener {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            // This method is called once with the initial value and again
+            // whenever data at this location is updated.
+            String value = "test";
+
+            myDataSnapshot = dataSnapshot;
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+
+            // Build a GoogleSignInClient with the options specified by gso.
+            mGoogleSignInClient = GoogleSignIn.getClient(getBaseContext(), gso);
+
+            // Check for existing Google Sign In account, if the user is already signed in
+            // the GoogleSignInAccount will be non-null.
+            final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+
+            updateUI(account);
+            //textView.setText(value);
+            Log.d(TAG, "Value is: " + value);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            // Failed to read value
+            Log.w(TAG, "Failed to read value.", error.toException());
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        myRef.removeEventListener(myEventListener);
+        myEventListener = null;
+        myRef = null;
     }
 
     private boolean crudate(@Nullable GoogleSignInAccount account){

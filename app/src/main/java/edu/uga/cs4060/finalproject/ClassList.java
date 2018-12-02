@@ -147,7 +147,7 @@ public class ClassList extends AppCompatActivity {
                 if(isTeacher) {
                     Intent intent = new Intent(getBaseContext(),TeacherMenuActivity.class);
                     intent.putExtra("classId", classPojo.getClassId());
-                    intent.putExtra("teacehrId", personId);
+                    intent.putExtra("teacherId", personId);
                     startActivity(intent);
                 } else {
                     //isStudent
