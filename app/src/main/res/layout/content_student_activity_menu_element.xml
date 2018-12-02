@@ -8,9 +8,8 @@
     tools:context=".StudentActivityMenuElement"
     tools:showIn="@layout/activity_student_menu_element">
 
-    <fragment
-        android:id="@+id/fragment2"
-        android:name="edu.uga.cs4060.finalproject.tempBlankFragment"
+    <FrameLayout
+        android:id="@+id/studentElementFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -22,7 +21,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline12" />
+        app:layout_constraintTop_toTopOf="@+id/guideline12">
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView5"

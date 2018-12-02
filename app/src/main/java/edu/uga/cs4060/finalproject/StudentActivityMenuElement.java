@@ -39,7 +39,7 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 textView5.setText("Your Resources");
                 fragment = new TeacherResourcesFragment();
                 fragment.setArguments(args);
-                ft.replace(R.id.fragment2,fragment);
+                ft.replace(R.id.studentElementFragment,fragment);
                 break;
             case R.id.bQuizzes2:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
@@ -49,7 +49,7 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 args.putString("classId",classId);
                 args.putString("studentId",studentId);
                 fragment.setArguments(args);
-                ft.replace(R.id.fragment2,fragment);
+                ft.replace(R.id.studentElementFragment,fragment);
                 /*
                 fragment = new StudentQuiz();//TODO change this to go to the quizlist
                 args.putString("quizId","-LS3EQGvMB-Ov9Oa2hK9");
@@ -62,7 +62,7 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
                 textView5.setText("Class Roster");
                 fragment = new StudentQuiz();
-                ft.replace(R.id.fragment2,fragment);
+                ft.replace(R.id.studentElementFragment,fragment);
                 break;
             default:
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
