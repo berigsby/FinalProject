@@ -85,6 +85,8 @@ public class TeacherMenuElement extends AppCompatActivity{
                 Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelection);
                 elementTextVIew.setText("Account Information");
                 fragment = new FragmentAccountInfo();
+                args.putString("teacherId",teacherId);
+                args.putString("classId",classId);
                 ft.replace(R.id.teacherElementFragment,fragment);
                 FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                 fab.hide();

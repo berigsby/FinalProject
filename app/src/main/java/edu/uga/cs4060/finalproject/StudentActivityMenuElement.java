@@ -70,6 +70,8 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
                 textView5.setText("Account Information");
                 fragment = new FragmentAccountInfo();
+                args.putString("studentId",studentId);
+                args.putString("classId",classId);
                 fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 break;
