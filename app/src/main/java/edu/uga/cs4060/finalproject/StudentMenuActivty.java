@@ -34,13 +34,12 @@ public class StudentMenuActivty extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v){
         Intent intent = new Intent(getBaseContext(), StudentActivityMenuElement.class);
-        if(v.getId() != R.id.bSync){
             //Log.d(DEBUG_TAG, "Using Button ID" + v.getId());
             intent.putExtra("classId", classId);
             intent.putExtra("studentId",studentId);
             intent.putExtra("buttonID", v.getId());
             startActivity(intent);
-        }
+
     }
 
 }

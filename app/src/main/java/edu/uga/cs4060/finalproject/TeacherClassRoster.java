@@ -3,10 +3,29 @@ package edu.uga.cs4060.finalproject;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,13 +41,15 @@ public class TeacherClassRoster extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    final String  TAG = "TeacherClassRosterF";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private String teacherID = "-LS3EQGb_fs76nVCm76l";
+    DataSnapshot myDataSnapshot;
+    DatabaseReference myRef;
     private OnFragmentInteractionListener mListener;
-
+    ListView rosterListView;
     public TeacherClassRoster() {
         // Required empty public constructor
     }
@@ -58,13 +79,71 @@ public class TeacherClassRoster extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "test";
+
+                myDataSnapshot = dataSnapshot;
+
+                //textView.setText(value);
+                Log.d(TAG, "Value is: " + value);
+                String classId = TeacherMenuElement.classId;//TODO Remove Testing Purposes only
+
+                //Database needs to be updated so classID are included
+                //List<StudentPojo> allStudents = MyFirebaseHelper.getAllStudents(myDataSnapshot);
+                //List<ClassPojo>
+                //addContentsToListView(bensClassRes);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+
+    //Add resources to the list view
+    private void addContentsToListView(List<StudentPojo> studentList){
+        rosterListView = getActivity().findViewById(R.id.ResourceListView);
+
+//        List<String> res = new ArrayList<String>();
+        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
+        for(StudentPojo stud : studentList){
+            Map<String,String> data = new HashMap<String,String>(2);
+            data.put("title", stud.getName());
+            data.put("subtitle",stud.getId());
+            res.add(data);
+            Log.d(TAG, stud.getName());
+        }
+
+        SimpleAdapter arrayAdapter = new SimpleAdapter(getActivity(),
+                res,
+                android.R.layout.simple_list_item_2,
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+
+        rosterListView.setAdapter(arrayAdapter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_class_roster, container, false);
+        View view = inflater.inflate(R.layout.fragment_teacher_class_roster, container, false);
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,16 +153,7 @@ public class TeacherClassRoster extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
+
 
     @Override
     public void onDetach() {

@@ -20,6 +20,7 @@ import java.util.List;
 public class TeacherMenuElement extends AppCompatActivity{
     final String DEBUG_TAG = "TeacherMenuElementA";
     TextView elementTextVIew;
+    public static String classId,teacherId,studentId,quizId;
     int teacherSelectionp2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +31,16 @@ public class TeacherMenuElement extends AppCompatActivity{
 
 
         //Get the intent
-        Intent intent = getIntent();
-        final int teacherSelection = intent.getIntExtra("buttonID",0);
+        //Intent intent = getIntent();
+        Bundle bungle = getIntent().getExtras();
+        final int teacherSelection = bungle.getInt("buttonId");
+        classId = bungle.getString("classId");
+        teacherId = bungle.getString("teacherId");
+        Log.d(DEBUG_TAG, "ClassId= " + classId + " & " + "teacherId= " + teacherId);
         teacherSelectionp2 = teacherSelection;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setImageResource(android.R.drawable.ic_input_add);
+        fab.show();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,30 +52,6 @@ public class TeacherMenuElement extends AppCompatActivity{
         selectFragment(teacherSelection);
     }
 
-    /***
-    * Do we see the fab? Yes or no based on option
-    */
-    private void fabSetDisplay(FloatingActionButton fab, int teacherSelection){
-        switch(teacherSelection){
-            case R.id.bRes:
-                Log.d(DEBUG_TAG, "bRes " + teacherSelection);
-                break;
-            case R.id.bQuizzes:
-                Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
-                break;
-            case R.id.bClassList:
-                Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
-                fab.hide();
-                break;
-            case R.id.bAccountInfo:
-                Log.d(DEBUG_TAG, "bAccountInfo " + teacherSelection);
-                fab.hide();
-                break;
-            default:
-                Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
-
-        }
-    }
 
     //Display and use the correct fragment
     private void selectFragment(int teacherSelection){
@@ -97,11 +79,13 @@ public class TeacherMenuElement extends AppCompatActivity{
                 fragment = new TeacherClassRoster();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;
-            case R.id.bAccountInfo:
+            case R.id.bAccountInfo2:
                 Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelection);
                 elementTextVIew.setText("Account Information");
                 fragment = new FragmentAccountInfo();
                 ft.replace(R.id.teacherElementFragment,fragment);
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.hide();
                 break;
             default:
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);

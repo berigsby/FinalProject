@@ -37,7 +37,7 @@ public class FragmentTeacherAddRes extends Fragment{
     private String mParam1;
     private String mParam2;
 
-    private String classID ="-LS3EQGm-8kZEW5ZDAw1";
+    private String classID =TeacherMenuElement.classId;
 
     private View aview;
     //Database stuff

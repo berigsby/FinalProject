@@ -121,6 +121,7 @@ public class TeacherAddQuizTitleDescFragment extends Fragment {
         buttonCreateQuiz = view.findViewById(R.id.buttonCreateQuiz);
         editQuizTitle = view.findViewById(R.id.editQuizTitle);
         editQuizDesc = view.findViewById(R.id.editQuizDesc);
+        classId = TeacherMenuElement.classId;
         buttonCreateQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

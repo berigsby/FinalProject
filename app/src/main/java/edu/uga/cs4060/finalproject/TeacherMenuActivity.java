@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class TeacherMenuActivity extends AppCompatActivity implements View.OnClickListener{
-    Button bRes, bQuizzes,bClassList,bSync;
+    Button bRes, bQuizzes,bClassList,bAccountInfo2;
+
+    String classId,teacherId,studentId,quizId;
+
     final String DEBUG_TAG = "TeacherMenuActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,21 +25,24 @@ public class TeacherMenuActivity extends AppCompatActivity implements View.OnCli
         bQuizzes.setOnClickListener(this);
         bClassList = findViewById(R.id.bClassList); //id : 2
         bClassList.setOnClickListener(this);
-        bSync = findViewById(R.id.bSync); //id : 3
-        bSync.setOnClickListener(this);
+        bAccountInfo2 = findViewById(R.id.bAccountInfo2); //id : 3
+        bAccountInfo2.setOnClickListener(this);
 
+        classId = "-LS3EQGm-8kZEW5ZDAw1";
+        teacherId ="-LS3EQGb_fs76nVCm76l";
     }
 
     @Override
     public void onClick(View v){
         Intent intent = new Intent(getBaseContext(), TeacherMenuElement.class);
-        if(v.getId() != R.id.bSync){
+
             Log.d(DEBUG_TAG, "Using Button ID" + v.getId());
-            intent.putExtra("buttonID", v.getId());
+            Bundle bungle = new Bundle();
+            bungle.putInt("buttonId", v.getId());
+            bungle.putString("classId",classId);
+            bungle.putString("teacherId",teacherId);
+            intent.putExtras(bungle);
             startActivity(intent);
-        }else{
-            Log.d(DEBUG_TAG, "Using Sync");
-            Toast.makeText(getBaseContext(),"Syncing class",Toast.LENGTH_LONG).show();
-        }
+
     }
 }
