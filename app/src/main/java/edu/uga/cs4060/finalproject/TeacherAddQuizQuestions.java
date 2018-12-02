@@ -171,7 +171,12 @@ public class TeacherAddQuizQuestions extends Fragment {
                         a1.getText().toString(),a2.getText().toString(),a3.getText().toString(),a4.getText().toString(),ans);
                 MyFirebaseHelper.create(myRef,questionPojo);
                 count++;
-
+                a1.setText("");
+                a2.setText("");
+                a3.setText("");
+                a4.setText("");
+                radioGroup.clearCheck();
+                questionTextView.setText("");
 
             }
         });

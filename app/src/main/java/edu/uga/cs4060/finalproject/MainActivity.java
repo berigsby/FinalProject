@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Read from the database
         myEventListener = new MyEventListener();
-        myRef.addValueEventListener(myEventListener);
+        myRef.addListenerForSingleValueEvent(myEventListener);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -296,10 +297,13 @@ public class MainActivity extends AppCompatActivity {
                 String name = account.getDisplayName();
                 id = account.getId();
 
+                //new RunPopUp().execute(name,id);
+
                 PopUpTeacherOrStudent popUp = new PopUpTeacherOrStudent();
                 popUp.setTheId(id);
                 popUp.setName(name);
                 popUp.setMyRef(myRef);
+
                 popUp.showNow(getSupportFragmentManager(),"hi");
                 //updateUI(account);
             }//else
@@ -342,14 +346,6 @@ public class MainActivity extends AppCompatActivity {
             // Failed to read value
             Log.w(TAG, "Failed to read value.", error.toException());
         }
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        myRef.removeEventListener(myEventListener);
-        myEventListener = null;
-        myRef = null;
     }
 
     private boolean crudate(@Nullable GoogleSignInAccount account){
