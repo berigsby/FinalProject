@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -99,9 +102,7 @@ public class TeacherResourcesFragment extends Fragment{
 
                 //textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
-
                 String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
-
                 List<ResourcePojo> bensClassRes = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
                 addContentsToListView(bensClassRes);
             }
@@ -115,7 +116,6 @@ public class TeacherResourcesFragment extends Fragment{
     }
     //Add resources to the list view
     private void addContentsToListView(List<ResourcePojo> bensClassRes){
-        String valueS = "";
         resourceListView = getActivity().findViewById(R.id.ResourceListView);
 
 //        List<String> res = new ArrayList<String>();
@@ -124,7 +124,6 @@ public class TeacherResourcesFragment extends Fragment{
             Map<String,String> data = new HashMap<String,String>(2);
             data.put("title", resourcePojo.getTitle());
             data.put("subtitle", resourcePojo.getText());
-            valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
             res.add(data);
             Log.d(TAG, resourcePojo.getTitle());
         }
@@ -134,7 +133,31 @@ public class TeacherResourcesFragment extends Fragment{
                 android.R.layout.simple_list_item_2,
                 new String[]{"title", "subtitle"},
                 new int[]{android.R.id.text1, android.R.id.text2});
+        resourceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String classId = "-LS3EQGm-8kZEW5ZDAw1";//TODO Remove Testing Purposes only
+                String studentId = "-LS3HYIciNWJduRJAoq-";
 
+                List<ResourcePojo> resources = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
+                ResourcePojo theResource = resources.get(arg2);
+                Log.d(TAG, "Obtaining resource ID: " + theResource.getResourceId() );
+
+                Fragment fragment;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Bundle args = new Bundle();
+                fragment = new ViewResource();
+                args.putString("resourceID",theResource.getResourceId());
+                args.putString("title",theResource.getTitle());
+                args.putString("description",theResource.getText());
+                ft.addToBackStack(null);
+                fragment.setArguments(args);
+                ft.replace(R.id.teacherElementFragment,fragment);
+                ft.commit();
+            }
+
+        });
         resourceListView.setAdapter(arrayAdapter);
     }
 
