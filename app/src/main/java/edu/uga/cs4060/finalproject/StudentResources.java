@@ -103,7 +103,8 @@ public class StudentResources extends Fragment {
         for(ResourcePojo resourcePojo : bensClassRes){
             Map<String,String> data = new HashMap<String,String>(2);
             data.put("title", resourcePojo.getTitle());
-            data.put("subtitle", resourcePojo.getText());
+            if(countLines(resourcePojo.getText())< 4)data.put("subtitle", resourcePojo.getText());
+            else data.put("subtitle", lines(resourcePojo.getText()));
             valueS = resourcePojo.getTitle() + " " + resourcePojo.getText() + "\n";
             res.add(data);
             Log.d(TAG, resourcePojo.getTitle());
@@ -116,6 +117,23 @@ public class StudentResources extends Fragment {
                 new int[]{android.R.id.text1, android.R.id.text2});
 
         resourceListStudent.setAdapter(arrayAdapter);
+    }
+    private static int countLines(String str){
+        if(str == null || str.isEmpty())
+        {
+            return 0;
+        }
+        int lines = 1;
+        int pos = 0;
+        while ((pos = str.indexOf("\n", pos) + 1) != 0) {
+            lines++;
+        }
+        return lines;
+    }
+
+    private String lines(String str){
+     String[] lines = str.split(System.getProperty("line.separator"));
+        return lines[0] + "\n" + lines[1] + "\n" + lines[2];
     }
 
     @Override
