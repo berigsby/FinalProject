@@ -65,6 +65,14 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 break;
+
+            case R.id.bAccountInfo2:
+                Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
+                textView5.setText("Account Information");
+                fragment = new FragmentAccountInfo();
+                fragment.setArguments(args);
+                ft.replace(R.id.studentElementFragment,fragment);
+                break;
             default:
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 

@@ -151,7 +151,7 @@ public class TeacherClassRoster extends Fragment {
 
                 //textView.setText(value);
                 Log.d(TAG, "Value is: " + value);
-                String classId = TeacherMenuElement.classId;//TODO Remove Testing Purposes only
+                String classId = TeacherMenuElement.classId;
 
                 //Database needs to be updated so classID are included
                 List<StudentPojo> allStudents = MyFirebaseHelper.getStudentsFromClassId(myDataSnapshot,classId);
