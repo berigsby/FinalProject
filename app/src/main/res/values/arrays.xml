@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <string-array name="test">
-            <item>Chinese</item>
-            <item>Fast Food</item>
-            <item>Mexican</item>
+        <string-array name="testAccount">
+            <item>-LS3EQGm-8kZEW5ZDAw1</item>
+            <item> 103158840994617443644</item>
         </string-array>
 </resources>

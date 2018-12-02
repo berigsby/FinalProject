@@ -15,9 +15,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 public class TeacherMenuElement extends AppCompatActivity{
     final String DEBUG_TAG = "TeacherMenuElementA";
     TextView elementTextVIew;
+    int teacherSelectionp2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +32,7 @@ public class TeacherMenuElement extends AppCompatActivity{
         //Get the intent
         Intent intent = getIntent();
         final int teacherSelection = intent.getIntExtra("buttonID",0);
-
+        teacherSelectionp2 = teacherSelection;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setImageResource(android.R.drawable.ic_input_add);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +85,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 elementTextVIew.setText("Your Resources");
                 fragment = new TeacherResourcesFragment();
                 fragment.setArguments(args);
+                ft.addToBackStack(null);
                 ft.replace(R.id.teacherElementFragment,fragment);
                 break;
             case R.id.bQuizzes:
@@ -109,6 +113,7 @@ public class TeacherMenuElement extends AppCompatActivity{
         ft.commit();
     }
 
+
     private void fabAction(int teacherSelection){
         Fragment fragment;
         FragmentManager fm = getSupportFragmentManager();
@@ -125,12 +130,65 @@ public class TeacherMenuElement extends AppCompatActivity{
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
-                fragment = new FragmentTeacherAddRes();
+                fragment = new tempBlankFragment();
                 ft.replace(R.id.teacherElementFragment, fragment);
                 break;
             default:
                 Log.d(DEBUG_TAG, "Nothing " + teacherSelection);
 
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        Log.d(DEBUG_TAG, "Fragment Count = " + getSupportFragmentManager().getBackStackEntryCount());
+
+        //If there are more than 2 fragments, pop the top
+        if(getSupportFragmentManager().getBackStackEntryCount() <= 1)
+        {
+            finish();//super.onBackPressed();
+        }
+        else{
+            getSupportFragmentManager().popBackStack();
+            refreshFragment();
+        }
+
+    }
+    //Refresh the fragment on the top of the stack
+    private void refreshFragment(){
+        Fragment cur = getCurrentFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(cur);
+        ft.attach(cur);
+        ft.commit();
+
+    }
+
+    private Fragment getCurrentFragment(){
+        Fragment fragment = new TeacherResourcesFragment();
+        List<Fragment> list = getSupportFragmentManager().getFragments();
+        switch(teacherSelectionp2){
+            case R.id.bRes:
+                Log.d(DEBUG_TAG, "bRes " + teacherSelectionp2);
+                fragment = new TeacherResourcesFragment();
+                break;
+            case R.id.bQuizzes:
+                Log.d(DEBUG_TAG, "bQuizzes " + teacherSelectionp2);
+                fragment = new TeacherQuizzesFragment();
+                break;
+            case R.id.bClassList:
+                Log.d(DEBUG_TAG, "bClassList " + teacherSelectionp2);
+                fragment = new TeacherClassRoster();
+                break;
+            case R.id.bAccountInfo:
+                Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelectionp2);
+                fragment = new FragmentAccountInfo();
+                break;
+            default:
+                Log.d(DEBUG_TAG, "Nothing " + teacherSelectionp2);
+
+        }
+
+        return fragment; //list.get(list.size() - 1);
     }
 }
