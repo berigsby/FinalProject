@@ -187,7 +187,7 @@ public class TeacherAddQuizQuestions extends Fragment {
             @Override
             public void onClick(View v) {
                if(count>0) {
-                   Toast.makeText(getContext(), "Question not recorded", Toast.LENGTH_LONG).show();
+                   //Toast.makeText(getContext(), "Question not recorded", Toast.LENGTH_LONG).show();
                    /*Screw it
                    getFragmentManager().popBackStack();
                    getActivity().onBackPressed();*/

@@ -143,6 +143,9 @@ public class StudentResources extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_student_resources, container, false);
         resourceListStudent = view.findViewById(R.id.ResourceListStudent);
+        Bundle b = getArguments();
+        classId = b.getString("classId");
+        studentId = b.getString("studentId");
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -190,9 +193,10 @@ public class StudentResources extends Fragment {
                 args.putString("resourceID",theResource.getResourceId());
                 args.putString("title",theResource.getTitle());
                 args.putString("description",theResource.getText());
+                //args.putInt("buttonId",1234);
                 ft.addToBackStack(null);
                 fragment.setArguments(args);
-                ft.replace(R.id.studentElementFragment,fragment);
+                ft.replace(R.id.studentElementFragment,fragment,"StudentResView");
                 ft.commit();
             }
 

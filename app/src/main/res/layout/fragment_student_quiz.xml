@@ -18,7 +18,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="TextView"
+        android:text="Loading..."
         app:layout_constraintBottom_toTopOf="@+id/studentQuizRadioGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,29 +41,25 @@
             android:id="@+id/studentQuizRadioButton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RadioButton" />
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/studentQuizRadioButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RadioButton" />
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/studentQuizRadioButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RadioButton" />
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/studentQuizRadioButton4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RadioButton" />
+            android:layout_weight="1" />
     </RadioGroup>
 
     <Button

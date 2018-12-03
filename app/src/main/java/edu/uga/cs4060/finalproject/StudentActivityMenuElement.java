@@ -69,6 +69,7 @@ public class StudentActivityMenuElement extends AppCompatActivity {
                 fragment.setArguments(args);
                 ft.replace(R.id.studentElementFragment,fragment);
                 break;
+            //case R.id.:
 
             case R.id.bAccountInfo2:
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
@@ -91,14 +92,60 @@ public class StudentActivityMenuElement extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         Log.d(DEBUG_TAG, "Fragment Count = " + getSupportFragmentManager().getBackStackEntryCount());
+        ViewResource myFrag = (ViewResource) getSupportFragmentManager().findFragmentByTag("StudentResView");
+        if(myFrag!=null){
+            if(teacherSelectionp2 == R.id.bRes2){
+                getSupportFragmentManager().popBackStack();//Immediate("StudentResView",0);
+                Fragment fragment;
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Bundle args = new Bundle();
+                args.putString("classId",classId);
+                args.putString("studentId",studentId);
+                textView5.setText("Your Resources");
+                fragment = new StudentResources();
+                fragment.setArguments(args);
+                //getSupportFragmentManager().popBackStack();
+                ft.addToBackStack(null);
+                ft.replace(R.id.studentElementFragment,fragment);
+                ft.commit();
+                /*
+               //getSupportFragmentManager().popBackStack();
+                Fragment fragment = new StudentResources();
+                Bundle args = new Bundle();
+                args.putString("classId",classId);
+                args.putString("studentId",studentId);
+                //args.putString("buttonId",teacherSelectionp2);
+                fragment = new StudentResources();
+                fragment.setArguments(args);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.detach(fragment);
+                ft.attach(fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                */
+                return;
+                //refreshFragment();
+            } else {
+            finish();//super.onBackPressed();
+            }
+        }
 
         //If there are more than 2 fragments, pop the top
         if(getSupportFragmentManager().getBackStackEntryCount() <= 1)
         {
-            finish();//super.onBackPressed();
+            //if(teacherSelectionp2 == R.id.bRes2){
+             //   getSupportFragmentManager().popBackStack();
+             //   refreshFragment();
+            //} else {
+                finish();//super.onBackPressed();
+            //}
         }
         else{
             getSupportFragmentManager().popBackStack();
+            if(teacherSelectionp2 == R.id.bRes2){
+               finish();
+            }
             refreshFragment();
         }
 
@@ -114,12 +161,18 @@ public class StudentActivityMenuElement extends AppCompatActivity {
     }
 
     private Fragment getCurrentFragment(){
-        Fragment fragment = new StudentQuizListFragment();
+        Fragment fragment = new StudentResources();//StudentQuizListFragment();
         List<Fragment> list = getSupportFragmentManager().getFragments();
         switch(teacherSelectionp2){
             case R.id.bRes2:
                 Log.d(DEBUG_TAG, "bRes " + teacherSelectionp2);
+                //super.onBackPressed();
+                Bundle args = new Bundle();
+                args.putString("classId",classId);
+                args.putString("studentId",studentId);
+                //args.putString("buttonId",teacherSelectionp2);
                 fragment = new StudentResources();
+                fragment.setArguments(args);
                 break;
             case R.id.bQuizzes2:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelectionp2);

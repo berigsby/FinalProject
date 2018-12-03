@@ -42,7 +42,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:gravity="center"
-            android:text="Pedagogy is the method and practice of teaching.\n\nUse Pedagogy to become a techer or enroll in a class as a student.\n\nAs a teacher, you can create new classes and share them with the world!\n\nAs a student, you can enroll in classes and test your knowledge!\n\nClick the button below to sign in with your gmail account."
+            android:text="Pedagogy is the method and practice of teaching.\n\nUse Pedagogy to become a teacher or enroll in a class as a student.\n\nAs a teacher, you can create new classes and share them with the world!\n\nAs a student, you can enroll in classes and test your knowledge!\n\nClick the button below to sign in with your gmail account."
             android:textSize="17sp"
             app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
             app:layout_constraintEnd_toEndOf="parent"

@@ -83,6 +83,7 @@ public class ViewResource extends Fragment {
         TextView descriptionResView = view.findViewById(R.id.descriptionResView);
         Bundle b = getArguments();
         //String resourceID = b.getString("resourceID");
+        //int buttonId = b.getInt("buttonId");
 
         String title = b.getString("title");
         String description = b.getString("description");
