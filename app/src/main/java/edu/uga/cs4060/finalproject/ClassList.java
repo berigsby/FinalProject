@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -135,6 +136,7 @@ public class ClassList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mGoogleSignInClient.signOut();
+                Toast.makeText(getBaseContext(), "Signed Out", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getBaseContext(),MainActivity.class);
                 startActivity(intent);
             }
@@ -146,10 +148,10 @@ public class ClassList extends AppCompatActivity {
                 String descText = descEdit.getText().toString();
                 String titleText = titleEdit.getText().toString();
                 if(descText.equals("")){
-                    //TODO add popup fail no desc or classId specified
+                    Toast.makeText(getBaseContext(), "Please fill in the values", Toast.LENGTH_LONG).show();
                 } else{
                     if (isTeacher && titleText.equals("")) {
-                        //TODO add popup fail no title entered
+                        Toast.makeText(getBaseContext(), "Please fill in the values", Toast.LENGTH_LONG).show();
                     } else if (isTeacher){
                         //Create a teacher class
                         ClassPojo classPojo = new ClassPojo("",personId,titleText,descText);
@@ -163,7 +165,7 @@ public class ClassList extends AppCompatActivity {
                         String classId = descText;
                         ClassPojo classPojo = MyFirebaseHelper.getClass(myDataSnapshot,classId);
                         if(classPojo == null){
-                            //TODO add popup fail noclass with id
+                            Toast.makeText(getBaseContext(), "No class found with that Id", Toast.LENGTH_LONG).show();
                         } else {
                             MyFirebaseHelper.enroll(myRef,personId,classId);
                             Intent intent = new Intent(getBaseContext(),StudentMenuActivty.class);
@@ -213,7 +215,6 @@ public class ClassList extends AppCompatActivity {
         classListView.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                // TODO Auto-generated method stub
 
                 List<ClassPojo> classList;
                 if(isTeacher){
@@ -227,12 +228,14 @@ public class ClassList extends AppCompatActivity {
 
                 if(isTeacher) {
                     MyFirebaseHelper.removeClass(myRef,myDataSnapshot,classPojo.getClassId());
+                    Toast.makeText(getBaseContext(), "Class Deleted", Toast.LENGTH_LONG).show();
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
                 } else {
                     //isStudent
                     MyFirebaseHelper.unenroll(myRef,myDataSnapshot,personId,classPojo.getClassId());
+                    Toast.makeText(getBaseContext(), "Un-enrolled", Toast.LENGTH_LONG).show();
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
