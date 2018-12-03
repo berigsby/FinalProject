@@ -32,6 +32,10 @@
             android:label="@string/title_activity_student_menu_element"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ClassList"></activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
