@@ -87,7 +87,8 @@ public class TeacherResourcesFragment extends Fragment{
 
         classId = TeacherMenuElement.classId;
         Log.d("TeacherFragRes", "Accessed");
-        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
+        //((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
+        TeacherMenuElement.fab.show();
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
