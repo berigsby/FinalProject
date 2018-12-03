@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -167,6 +168,8 @@ public class TeacherResourcesFragment extends Fragment{
 
                 List<ResourcePojo> resources = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
                 ResourcePojo theResource = resources.get(pos);
+
+                Toast.makeText(getContext(), "Resource deleted", Toast.LENGTH_LONG).show();
 
                 MyFirebaseHelper.removeResource(myRef,theResource.getResourceId());
                 Fragment cur = new TeacherResourcesFragment();

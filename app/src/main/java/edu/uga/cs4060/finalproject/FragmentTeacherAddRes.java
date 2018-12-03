@@ -98,6 +98,7 @@ public class FragmentTeacherAddRes extends Fragment{
             String text = descriptionTextView.getText().toString().trim();
             ResourcePojo stevesRes1 = new ResourcePojo("", classID, title, text);
             stevesRes1 = MyFirebaseHelper.create(myRef,stevesRes1);
+            Toast.makeText(getContext(), "Resource Added", Toast.LENGTH_LONG).show();
             //Return to the previous fragment to review the added resource
             ((TeacherMenuElement)getActivity()).onBackPressed();
         }

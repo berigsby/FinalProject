@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -144,6 +145,7 @@ public class TeacherClassRoster extends Fragment {
                 StudentPojo theStudent = studentList2.get(pos);
 
                 MyFirebaseHelper.unenroll(myRef,myDataSnapshot,theStudent.getStudentId(),classID);
+                Toast.makeText(getContext(), "Student un-enrolled", Toast.LENGTH_LONG).show();
                 Fragment cur = new TeacherClassRoster();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.detach(cur);

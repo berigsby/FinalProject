@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -160,6 +161,7 @@ public class TeacherQuizzesFragment extends Fragment {
 
                 List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot,classId);
                 QuizPojo quizPojo = studentQuizzesLeft.get(pos);
+                Toast.makeText(getContext(), "Quiz deleted", Toast.LENGTH_LONG).show();
 
                 MyFirebaseHelper.removeQuiz(myRef,myDataSnapshot,quizPojo.getQuizId());
                 Fragment cur = new TeacherQuizzesFragment();

@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -102,6 +103,7 @@ public class StudentQuiz extends Fragment {
         if(!quizToFinish.equals(quizId)){
             if(!quizToFinish.equals("")) {
                 //getActivity().onBackPressed();
+                Toast.makeText(getContext(), "Please finish other quiz", Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(getContext(),StudentMenuActivty.class);
                 intent.putExtra("classId",classId);
@@ -135,6 +137,7 @@ public class StudentQuiz extends Fragment {
         }
         if(questionPojo == null){
             //getActivity().onBackPressed();
+            Toast.makeText(getContext(), "Error...", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getContext(),StudentMenuActivty.class);
             intent.putExtra("classId",classId);
             intent.putExtra("studentId",studentId);
@@ -199,6 +202,7 @@ public class StudentQuiz extends Fragment {
                         //intent.putExtra("buttonID", R.id.bQuizzes2); //getActivity().findViewById(R.id.bQuizzes2).getId());
                         //startActivity(intent);
                     } else {
+                        Toast.makeText(getContext(), "Quiz Complete", Toast.LENGTH_LONG).show();
                         getActivity().onBackPressed();
                         Intent intent = new Intent(getContext(),StudentActivityMenuElement.class);//
                         intent.putExtra("classId",classId);
