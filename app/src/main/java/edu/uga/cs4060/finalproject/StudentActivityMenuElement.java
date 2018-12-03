@@ -9,11 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class StudentActivityMenuElement extends AppCompatActivity {
     String DEBUG_TAG = "StudentActivityMenuElement";
     TextView textView5;
 
     String classId,studentId;
+    int teacherSelectionp2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,7 @@ public class StudentActivityMenuElement extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         Intent intent = getIntent();
         int teacherSelection = intent.getIntExtra("buttonID",0);
+        teacherSelectionp2 = teacherSelection;
         classId = intent.getStringExtra("classId");
         studentId = intent.getStringExtra("studentId");
 
@@ -82,6 +86,59 @@ public class StudentActivityMenuElement extends AppCompatActivity {
 
 
         ft.commit();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Log.d(DEBUG_TAG, "Fragment Count = " + getSupportFragmentManager().getBackStackEntryCount());
+
+        //If there are more than 2 fragments, pop the top
+        if(getSupportFragmentManager().getBackStackEntryCount() <= 1)
+        {
+            finish();//super.onBackPressed();
+        }
+        else{
+            getSupportFragmentManager().popBackStack();
+            refreshFragment();
+        }
+
+    }
+    //Refresh the fragment on the top of the stack
+    private void refreshFragment(){
+        Fragment cur = getCurrentFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(cur);
+        ft.attach(cur);
+        ft.commit();
+
+    }
+
+    private Fragment getCurrentFragment(){
+        Fragment fragment = new StudentQuizListFragment();
+        List<Fragment> list = getSupportFragmentManager().getFragments();
+        switch(teacherSelectionp2){
+            case R.id.bRes2:
+                Log.d(DEBUG_TAG, "bRes " + teacherSelectionp2);
+                fragment = new StudentResources();
+                break;
+            case R.id.bQuizzes2:
+                Log.d(DEBUG_TAG, "bQuizzes " + teacherSelectionp2);
+                fragment = new StudentQuizListFragment();
+                break;
+            case R.id.bQuizHistory:
+                Log.d(DEBUG_TAG, "bClassList " + teacherSelectionp2);
+                fragment = new StudentGrades();
+                break;
+            case R.id.bAccountInfo2:
+                Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelectionp2);
+                fragment = new FragmentAccountInfo();
+                break;
+            default:
+                Log.d(DEBUG_TAG, "Nothing " + teacherSelectionp2);
+
+        }
+
+        return fragment; //list.get(list.size() - 1);
     }
 
 }
