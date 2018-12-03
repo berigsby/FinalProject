@@ -159,6 +159,23 @@ public class TeacherResourcesFragment extends Fragment{
             }
 
         });
+        resourceListView.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                // TODO Auto-generated method stub
+
+                List<ResourcePojo> resources = MyFirebaseHelper.getResourcesFromClassId(myDataSnapshot,classId);
+                ResourcePojo theResource = resources.get(pos);
+
+                MyFirebaseHelper.removeResource(myRef,theResource.getResourceId());
+                Fragment cur = new TeacherResourcesFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(cur);
+                ft.attach(cur);
+                ft.commit();
+                return true;
+            }
+        });
         resourceListView.setAdapter(arrayAdapter);
     }
 
@@ -175,6 +192,12 @@ public class TeacherResourcesFragment extends Fragment{
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
     }
 
 

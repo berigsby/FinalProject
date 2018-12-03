@@ -210,6 +210,38 @@ public class ClassList extends AppCompatActivity {
 
         });
 
+        classListView.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                // TODO Auto-generated method stub
+
+                List<ClassPojo> classList;
+                if(isTeacher){
+                    classList = MyFirebaseHelper.getClassesFromTeacherId(myDataSnapshot,personId);
+                } else {
+                    //isStudent
+                    classList = MyFirebaseHelper.getClassesFromStudentId(myDataSnapshot, personId);
+                }
+
+                ClassPojo classPojo = classList.get(pos);
+
+                if(isTeacher) {
+                    MyFirebaseHelper.removeClass(myRef,myDataSnapshot,classPojo.getClassId());
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                } else {
+                    //isStudent
+                    MyFirebaseHelper.unenroll(myRef,myDataSnapshot,personId,classPojo.getClassId());
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+
+                return true;
+            }
+        });
+
     }
 
     //Add resources to the list view

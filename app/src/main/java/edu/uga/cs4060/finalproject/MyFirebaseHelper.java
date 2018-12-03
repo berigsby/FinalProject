@@ -285,7 +285,7 @@ public class MyFirebaseHelper {
      * @param studentId
      * @param quizId
      * @return list of questionPojo yet to be answered in no order
-     */
+     *//*
     private static List<QuestionPojo> continueQuiz(DataSnapshot dataSnapshot, String studentId, String quizId){
         List<QuestionPojo> questions = getQuestionsFromQuizId(dataSnapshot,quizId);
         List<QuizResultsToQuestionPojo> quizResultsToQuestionPojos = getQuizResultsToQuestionFromIds(dataSnapshot,quizId,studentId);
@@ -296,6 +296,7 @@ public class MyFirebaseHelper {
         }
         return questions;
     }
+    */
 
     /**
      * This initiates a quiz in firebase by creating the quizResultsToQuestionPojo objects in teh database
@@ -346,7 +347,7 @@ public class MyFirebaseHelper {
         for(QuizResultsToQuestionPojo quizResultsToQuestionPojo : returnList){
             if(quizResultsToQuestionPojo.getUserAnswerChoice() == 0){
                 if(returnList.size() > 1) {
-                    returnList.remove(quizResultsToQuestionPojo);
+                    //returnList.remove(quizResultsToQuestionPojo);
                     //Collections.shuffle(returnList);
                     //returnList.get(0).setUserAnswerChoice(0);
                     //update(myRef, returnList.get(0));
@@ -887,6 +888,24 @@ public class MyFirebaseHelper {
             }
         }
 
+    }
+
+    public static void unenroll(DatabaseReference myRef, DataSnapshot dataSnapshot, String studentId, String classId){
+        ArrayList<IdHolder> idHolders2 = new ArrayList<>();
+        ArrayList<String> ids2 = new ArrayList<>();
+        for(DataSnapshot child : dataSnapshot.child("enrollment").getChildren()){
+            ids2.add(child.getKey());
+            IdHolder idHolder = child.getValue(IdHolder.class);
+            idHolders2.add(idHolder);
+        }//for
+        for(int i = 0; i < idHolders2.size(); i++){
+            String itemQuizId = idHolders2.get(i).getStudentId();
+            String classIdHere = idHolders2.get(i).getClassId();
+            if(itemQuizId == null) continue;
+            if(itemQuizId.equals(studentId) && classIdHere.equals(classId)){
+                removeItem(myRef,"enrollment",ids2.get(i));
+            }
+        }
     }
 
     /**
