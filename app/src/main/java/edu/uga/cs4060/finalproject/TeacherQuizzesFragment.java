@@ -153,6 +153,24 @@ public class TeacherQuizzesFragment extends Fragment {
                 new String[]{"title", "subtitle"},
                 new int[]{android.R.id.text1, android.R.id.text2});
 
+        resourceListStudent.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                // TODO Auto-generated method stub
+
+                List<QuizPojo> studentQuizzesLeft = MyFirebaseHelper.getQuizzesFromClassId(myDataSnapshot,classId);
+                QuizPojo quizPojo = studentQuizzesLeft.get(pos);
+
+                MyFirebaseHelper.removeQuiz(myRef,myDataSnapshot,quizPojo.getQuizId());
+                Fragment cur = new TeacherQuizzesFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(cur);
+                ft.attach(cur);
+                ft.commit();
+                return true;
+            }
+        });
+
         resourceListStudent.setAdapter(arrayAdapter);
     }
 

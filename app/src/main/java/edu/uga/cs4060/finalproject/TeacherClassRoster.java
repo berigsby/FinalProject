@@ -130,6 +130,22 @@ public class TeacherClassRoster extends Fragment {
                 ft.commit();
             }
         });
+
+        rosterListView.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                // TODO Auto-generated method stub
+                StudentPojo theStudent = studentList2.get(pos);
+
+                MyFirebaseHelper.unenroll(myRef,myDataSnapshot,theStudent.getStudentId(),classID);
+                Fragment cur = new TeacherClassRoster();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(cur);
+                ft.attach(cur);
+                ft.commit();
+                return true;
+            }
+        });
     }
 
     @Override
