@@ -25,7 +25,7 @@ public class PopUpTeacherOrStudent extends DialogFragment {
                         teacherOrStudent = "student";
                         MyFirebaseHelper.createAccount(myRef, new StudentPojo(theid, name));
                         Intent intent = new Intent(getActivity().getBaseContext(),ClassList.class);
-                        intent.putExtra("studentId", id);
+                        intent.putExtra("studentId", theid);
                         startActivity(intent);
                     }
                 })
@@ -34,7 +34,7 @@ public class PopUpTeacherOrStudent extends DialogFragment {
                         teacherOrStudent = "teacher";
                         MyFirebaseHelper.createAccount(myRef, new TeacherPojo(name, theid));
                         Intent intent = new Intent(getActivity().getBaseContext(),ClassList.class);
-                        intent.putExtra("teacherId", id);
+                        intent.putExtra("teacherId", theid);
                         startActivity(intent);
                     }
                 });
