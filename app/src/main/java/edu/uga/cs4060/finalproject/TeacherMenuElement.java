@@ -21,8 +21,11 @@ import java.util.List;
 public class TeacherMenuElement extends AppCompatActivity{
     final String DEBUG_TAG = "TeacherMenuElementA";
     TextView elementTextVIew;
+    Bundle bungle;
     public static String classId,teacherId,studentId,quizId;
-    int teacherSelectionp2;
+    int teacherSelection, teacherSelectionp2;
+    public static FloatingActionButton fab;
+    public boolean rotate = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +36,23 @@ public class TeacherMenuElement extends AppCompatActivity{
 
         //Get the intent
         //Intent intent = getIntent();
-        Bundle bungle = getIntent().getExtras();
-        final int teacherSelection = bungle.getInt("buttonId");
+        if(savedInstanceState == null)
+        {
+            bungle = getIntent().getExtras();
+        }
+        else
+        {
+            bungle = savedInstanceState;
+            rotate = true;
+        }
+
+        teacherSelection = bungle.getInt("buttonId");
         classId = bungle.getString("classId");
         teacherId = bungle.getString("teacherId");
+
         Log.d(DEBUG_TAG, "ClassId= " + classId + " & " + "teacherId= " + teacherId);
         teacherSelectionp2 = teacherSelection;
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setImageResource(android.R.drawable.ic_input_add);
         fab.setColorFilter(Color.WHITE);
         fab.show();
@@ -53,6 +66,16 @@ public class TeacherMenuElement extends AppCompatActivity{
         elementTextVIew = findViewById(R.id.elementTextVIew);
         selectFragment(teacherSelection);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle){
+        bundle.putString("classId", classId);
+        bundle.putString("teacherId", teacherId);
+        bundle.putInt("buttonId", teacherSelection);
+
+        super.onSaveInstanceState(bundle);
+    }
+
 
 
     //Display and use the correct fragment
@@ -70,7 +93,8 @@ public class TeacherMenuElement extends AppCompatActivity{
                 fragment = new TeacherResourcesFragment();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 fragment.setArguments(args);
-                ft.addToBackStack(null);
+
+                if(!rotate) ft.addToBackStack(null);
                 break;
             case R.id.bQuizzes:
                 Log.d(DEBUG_TAG, "bQuizzes " + teacherSelection);
@@ -78,7 +102,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 fragment = new TeacherQuizzesFragment();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 fragment.setArguments(args);
-                ft.addToBackStack(null);
+                if(!rotate) ft.addToBackStack(null);
                 break;
             case R.id.bClassList:
                 Log.d(DEBUG_TAG, "bClassList " + teacherSelection);
@@ -86,7 +110,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 fragment = new TeacherClassRoster();
                 ft.replace(R.id.teacherElementFragment,fragment);
                 fragment.setArguments(args);
-                ft.addToBackStack(null);
+                if(!rotate) ft.addToBackStack(null);
                 break;
             case R.id.bAccountInfo:
                 Log.d(DEBUG_TAG, "bAccountInfo"+ teacherSelection);
@@ -96,7 +120,7 @@ public class TeacherMenuElement extends AppCompatActivity{
                 args.putString("classId",classId);
                 ft.replace(R.id.teacherElementFragment,fragment);
                 fragment.setArguments(args);
-                ft.addToBackStack(null);
+                if(!rotate) ft.addToBackStack(null);
                 FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                 fab.hide();
                 break;

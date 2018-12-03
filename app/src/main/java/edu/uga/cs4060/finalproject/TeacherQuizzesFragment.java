@@ -79,7 +79,8 @@ public class TeacherQuizzesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
+//        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).show();
+        TeacherMenuElement.fab.show();
         //Accessing the firebase test
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();

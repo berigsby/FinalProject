@@ -81,8 +81,9 @@ public class TeacherClassRoster extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        ((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
 
+        //((FloatingActionButton)((TeacherMenuElement)getActivity()).findViewById(R.id.fab)).hide();
+        TeacherMenuElement.fab.hide();
 
     }
 
@@ -95,6 +96,9 @@ public class TeacherClassRoster extends Fragment {
         final List<Map<String,String>> res = new ArrayList<Map<String,String>>();
         for(StudentPojo stud : studentList){
             Map<String,String> data = new HashMap<String,String>(2);
+            if(stud == null){
+                return;
+            }
             data.put("title", stud.getName());
             data.put("subtitle",stud.getId());
             res.add(data);
