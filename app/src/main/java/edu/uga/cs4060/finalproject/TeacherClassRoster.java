@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -126,6 +127,8 @@ public class TeacherClassRoster extends Fragment {
                 ft.addToBackStack(null);
                 fragment.setArguments(args);
                 ft.replace(R.id.teacherElementFragment,fragment);
+                TextView tv = getActivity().findViewById(R.id.elementTextVIew);
+                tv.setText("Quizzes for: " + theStudent.getName());
                 ft.commit();
             }
         });
@@ -154,6 +157,9 @@ public class TeacherClassRoster extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_teacher_class_roster, container, false);
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
+
+        TextView tv = getActivity().findViewById(R.id.elementTextVIew);
+        tv.setText("Class Roster");
 
         // Read from the database
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {

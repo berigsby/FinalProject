@@ -4,10 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -140,6 +142,27 @@ public class StudentGrades extends Fragment {
                 android.R.layout.simple_list_item_2,
                 new String[]{"title", "subtitle"},
                 new int[]{android.R.id.text1, android.R.id.text2});
+
+        studentGradesList.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                // TODO Auto-generated method stub
+                List<QuizPojo> quizPojos = MyFirebaseHelper.getQuizzesTaken(myDataSnapshot,studentId,classId);
+                QuizPojo quizPojo = quizPojos.get(pos);
+                MyFirebaseHelper.removeAnsweredQuestions(myRef,myDataSnapshot,studentId,quizPojo.getQuizId());
+
+                Bundle args = new Bundle();
+                Fragment cur = new StudentGrades();
+                args.putString("classId",classId);
+                args.putString("studentId",studentId);
+                cur.setArguments(args);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(cur);
+                ft.attach(cur);
+                ft.commit();
+                return true;
+            }
+        });
 
         studentGradesList.setAdapter(arrayAdapter);
     }

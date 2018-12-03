@@ -199,6 +199,7 @@ public class StudentQuiz extends Fragment {
                         //intent.putExtra("buttonID", R.id.bQuizzes2); //getActivity().findViewById(R.id.bQuizzes2).getId());
                         //startActivity(intent);
                     } else {
+                        getActivity().onBackPressed();
                         Intent intent = new Intent(getContext(),StudentActivityMenuElement.class);//
                         intent.putExtra("classId",classId);
                         intent.putExtra("studentId",studentId);
