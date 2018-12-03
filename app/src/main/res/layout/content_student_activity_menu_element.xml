@@ -29,7 +29,7 @@
         android:id="@+id/textView5"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:gravity="left|bottom"
+        android:gravity="center|bottom"
         android:text="Resource | Quiz | Sync? | Class Roster"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
@@ -37,6 +37,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toTopOf="@+id/guideline12" />
     <android.support.constraint.Guideline
         android:id="@+id/guideline12"
         android:layout_width="wrap_content"
